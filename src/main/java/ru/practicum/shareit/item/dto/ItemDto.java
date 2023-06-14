@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.practicum.shareit.user.User;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Data
 @AllArgsConstructor
 public class ItemDto {
@@ -16,7 +13,7 @@ public class ItemDto {
     private Boolean isAvailable;
     private User owner;
     private Integer requestId;
-    
+
     public ItemDto(String name, String description, Boolean isAvailable, Integer requestId) {
         this.name = name;
         this.description = description;
