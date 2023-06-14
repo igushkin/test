@@ -7,4 +7,3 @@ public class UserIdGenerator {
         return id++;
     }
 }
-
