@@ -1,9 +1,14 @@
 package ru.practicum.shareit.item.storage;
 
 public class ItemIdGenerator {
-    private static Integer id = 1;
+    private static Integer id;
+
+    static {
+        id = 0;
+    }
 
     public static Integer getId() {
-        return id++;
+        id += 1;
+        return id;
     }
 }
