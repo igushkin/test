@@ -67,7 +67,7 @@ public class InMemoryItemStorage implements ItemStorage {
             throw new NotFoundException("Итема с таким идентификатором не существует");
         }
 
-        if (originalItem.getOwner().getId() != userId) {
+        if (!originalItem.getOwner().getId().equals(userId)) {
             throw new ConsistencyException("Идентификатор владельца не совпадает");
         }
 
@@ -83,7 +83,7 @@ public class InMemoryItemStorage implements ItemStorage {
             throw new NotFoundException("Итема с таким идентификатором не существует");
         }
 
-        if (originalItem.getOwner().getId() != userId) {
+        if (!originalItem.getOwner().getId().equals(userId)) {
             throw new ConsistencyException("Идентификатор владельца не совпадает");
         }
 
@@ -99,7 +99,7 @@ public class InMemoryItemStorage implements ItemStorage {
             throw new NotFoundException("Итема с таким идентификатором не существует");
         }
 
-        if (originalItem.getOwner().getId() != userId) {
+        if (!originalItem.getOwner().getId().equals(userId)) {
             throw new ConsistencyException("Идентификатор владельца не совпадает");
         }
 
