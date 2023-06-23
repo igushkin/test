@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.storage;
 
 import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
 
@@ -11,7 +13,11 @@ public interface ItemStorage {
 
     List<Item> findAvailableItemsByText(String text);
 
-    Item createItem(Item item);
+    Item createItem(Integer userId, Item item);
 
-    Item patchItem(Item item, Integer itemId);
+    Item patchItemName(Item item, Integer itemId, Integer userId);
+
+    Item patchItemDescription(Item item, Integer itemId, Integer userId);
+
+    Item patchItemStatus(Item item, Integer itemId, Integer userId);
 }

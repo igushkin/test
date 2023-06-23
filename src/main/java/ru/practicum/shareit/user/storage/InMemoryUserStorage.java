@@ -1,10 +1,13 @@
 package ru.practicum.shareit.user.storage;
 
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.exception.ConsistencyException;
+import ru.practicum.shareit.exception.DuplicateKeyException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.dto.UserPatchDto;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
@@ -18,7 +21,9 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> getUsers() {
-        return new ArrayList<>(userStorage.values());
+        return userStorage.values()
+                .stream()
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -28,15 +33,19 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void deleteUser(Integer id) {
-        validateRemoval(id);
+        if (!userStorage.containsKey(id)) {
+            throw new NotFoundException("Такого пользователя не сущ.");
+        }
 
         emailStorage.remove(userStorage.get(id).getEmail());
         userStorage.remove(id);
     }
 
+    @Override
     public User createUser(User user) {
-        validateCreation(user);
-
+        if (emailStorage.contains(user.getEmail())) {
+            throw new DuplicateKeyException("Пользователь с таким email уже сущ.");
+        }
         user.setId(UserIdGenerator.getId());
         userStorage.put(user.getId(), user);
         emailStorage.add(user.getEmail());
@@ -45,43 +54,32 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User patchUser(UserPatchDto userPatchDto, Integer id) {
-        validatePatch(userPatchDto, id);
-
+    public User patchUserName(User user, Integer id) {
         var originalUser = userStorage.get(id);
 
-        if (userPatchDto.getName() != null) {
-            originalUser.setName(userPatchDto.getName());
-        }
-        if (userPatchDto.getEmail() != null) {
-            emailStorage.remove(originalUser.getEmail());
-            emailStorage.add(userPatchDto.getEmail());
-
-            originalUser.setEmail(userPatchDto.getEmail());
+        if (originalUser == null) {
+            throw new NotFoundException("Пользователя с таким идентификатором не существует");
         }
 
+        originalUser.setName(user.getName());
         return originalUser;
     }
 
-    private void validateCreation(User user) {
-        if (emailStorage.contains(user.getEmail())) {
-            throw new RuntimeException();
-        }
-    }
+    @Override
+    public User patchUserEmail(User user, Integer userId) {
+        var originalUser = userStorage.get(userId);
 
-    private void validateRemoval(Integer id) {
-        if (!userStorage.containsKey(id)) {
-            throw new RuntimeException();
+        if (originalUser == null) {
+            throw new NotFoundException("Пользователя с таким идентификатором не существует");
         }
-    }
+        if (emailStorage.contains(user.getEmail()) && !originalUser.getEmail().equals(user.getEmail())) {
+            throw new ConsistencyException("Пользователя с таким идентификатором не существует");
+        }
 
-    private void validatePatch(UserPatchDto userPatchDto, Integer id) {
-        if (!userStorage.containsKey(id)) {
-            throw new RuntimeException();
-        }
-        var originalUser = userStorage.get(id);
-        if (emailStorage.contains(userPatchDto.getEmail()) && !userPatchDto.getEmail().equals(originalUser.getEmail())) {
-            throw new RuntimeException();
-        }
+        emailStorage.remove(originalUser.getEmail());
+        emailStorage.add(user.getEmail());
+
+        originalUser.setEmail(user.getEmail());
+        return originalUser;
     }
 }

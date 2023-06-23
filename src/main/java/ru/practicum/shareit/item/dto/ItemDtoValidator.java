@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.dto;
 
 import org.apache.logging.log4j.util.Strings;
 import ru.practicum.shareit.item.dto.ItemDto;

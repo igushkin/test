@@ -1,9 +1,12 @@
 package ru.practicum.shareit.item.storage;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.exception.ConsistencyException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.user.storage.InMemoryUserStorage;
 
-import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +15,11 @@ import java.util.stream.Collectors;
 @Component
 public class InMemoryItemStorage implements ItemStorage {
     private final Map<Integer, Item> itemStorage;
+    private final InMemoryUserStorage userStorage;
 
-    public InMemoryItemStorage() {
+    @Autowired
+    public InMemoryItemStorage(InMemoryUserStorage userStorage) {
+        this.userStorage = userStorage;
         this.itemStorage = new HashMap<>();
     }
 
@@ -40,43 +46,65 @@ public class InMemoryItemStorage implements ItemStorage {
     }
 
     @Override
-    public Item createItem(Item item) {
-        validateCreation(item);
+    public Item createItem(Integer userId, Item item) {
+        var user = userStorage.getUserById(userId);
+
+        if (user == null) {
+            throw new NotFoundException("Пользователя с таким идентификатором не существует");
+        }
+
         item.setId(ItemIdGenerator.getId());
+        item.setOwner(user);
         itemStorage.put(item.getId(), item);
         return item;
     }
 
     @Override
-    public Item patchItem(Item item, Integer itemId) {
-        var originalItem = getItemById(itemId);
-        validatePatch(originalItem, item);
+    public Item patchItemName(Item item, Integer itemId, Integer userId) {
+        var originalItem = itemStorage.get(itemId);
 
-        if (item.getAvailable() != null) {
-            originalItem.setAvailable(item.getAvailable());
-        }
-        if (item.getName() != null) {
-            originalItem.setName(item.getName());
-        }
-        if (item.getDescription() != null) {
-            originalItem.setDescription(item.getDescription());
+        if (originalItem == null) {
+            throw new NotFoundException("Итема с таким идентификатором не существует");
         }
 
+        if(originalItem.getOwner().getId() != userId){
+            throw new ConsistencyException("Идентификатор владельца не совпадает");
+        }
+
+        originalItem.setName(item.getName());
         return originalItem;
     }
 
-    private void validateCreation(Item item) {
-        if (item.getOwner() == null) {
-            throw new InvalidParameterException("Owner field is required");
+    @Override
+    public Item patchItemDescription(Item item, Integer itemId,  Integer userId) {
+        var originalItem = itemStorage.get(itemId);
+
+        if (originalItem == null) {
+            throw new NotFoundException("Итема с таким идентификатором не существует");
         }
+
+        if(originalItem.getOwner().getId() != userId){
+            throw new ConsistencyException("Идентификатор владельца не совпадает");
+        }
+
+        originalItem.setDescription(item.getDescription());
+        return originalItem;
     }
 
-    private void validatePatch(Item original, Item patch) {
-        if (patch.getOwner() == null) {
-            throw new InvalidParameterException("Owner field is required");
+    @Override
+    public Item patchItemStatus(Item item, Integer itemId, Integer userId) {
+        var originalItem = itemStorage.get(itemId);
+
+        if (originalItem == null) {
+            throw new NotFoundException("Итема с таким идентификатором не существует");
         }
-        if (!patch.getOwner().getId().equals(original.getOwner().getId())) {
-            throw new InvalidParameterException("The owner of the item does not match");
+
+        if(originalItem.getOwner().getId() != userId){
+            throw new ConsistencyException("Идентификатор владельца не совпадает");
         }
+
+        originalItem.setAvailable(item.getAvailable());
+        return originalItem;
     }
+
 }

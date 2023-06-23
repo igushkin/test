@@ -1,52 +1,80 @@
 package ru.practicum.shareit.item;
 
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoValidator;
 import ru.practicum.shareit.item.storage.ItemStorage;
-import ru.practicum.shareit.user.storage.UserStorage;
 
+import java.security.InvalidParameterException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
 
     private final ItemStorage itemStorage;
-    private final UserStorage userStorage;
 
-    @Autowired
-    public ItemService(ItemStorage itemStorage, UserStorage userStorage) {
+    public ItemService(ItemStorage itemStorage) {
         this.itemStorage = itemStorage;
-        this.userStorage = userStorage;
     }
 
-    public Item getItemById(Integer id) {
-        return itemStorage.getItemById(id);
+    public ItemDto getItemById(Integer id) {
+        return ItemMapper.toItemDto(itemStorage.getItemById(id));
     }
 
-    public List<Item> getAllByUserId(Integer userId) {
-        return itemStorage.getItemsByUserId(userId);
+    public List<ItemDto> getAllByUserId(Integer userId) {
+        return itemStorage.getItemsByUserId(userId)
+                .stream()
+                .map(x -> ItemMapper.toItemDto(x))
+                .collect(Collectors.toList());
     }
 
-    public List<Item> findItemByText(String text) {
+    public List<ItemDto> findItemByText(String text) {
         text = text.trim().toLowerCase();
 
         if (Strings.isBlank(text)) {
             return List.of();
         }
 
-        return itemStorage.findAvailableItemsByText(text);
+        return itemStorage.findAvailableItemsByText(text)
+                .stream()
+                .map(x -> ItemMapper.toItemDto(x))
+                .collect(Collectors.toList());
     }
 
-    public Item createItem(Integer userId, Item item) {
-        var owner = userStorage.getUserById(userId);
-        item.setOwner(owner);
-        return itemStorage.createItem(item);
+    public ItemDto createItem(Integer userId, ItemDto itemDto) {
+        var validationResult = ItemDtoValidator.validateCreation(itemDto);
+
+        if (validationResult.size() > 0) {
+            throw new InvalidParameterException(validationResult.get(0));
+        }
+
+        return ItemMapper.toItemDto(itemStorage.createItem(userId, ItemMapper.toItem(itemDto)));
     }
 
-    public Item patchItem(Item item, Integer itemId, Integer userId) {
-        var owner = userStorage.getUserById(userId);
-        item.setOwner(owner);
-        return itemStorage.patchItem(item, itemId);
+
+    public ItemDto patchItem(ItemDto itemDto, Integer itemId, Integer userId) {
+        var validationResult = ItemDtoValidator.validatePatch(itemDto);
+
+        if (validationResult.size() > 0) {
+            throw new InvalidParameterException(validationResult.get(0));
+        }
+
+        var item = ItemMapper.toItem(itemDto);
+        Item result = null;
+
+        if (item.getName() != null) {
+            result = itemStorage.patchItemName(item, itemId, userId);
+        }
+        if (item.getDescription() != null) {
+            result = itemStorage.patchItemDescription(item, itemId, userId);
+        }
+        if (item.getAvailable() != null) {
+            result = itemStorage.patchItemStatus(item, itemId, userId);
+        }
+
+        return ItemMapper.toItemDto(result);
+
     }
 }
