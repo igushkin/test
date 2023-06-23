@@ -1,7 +1,5 @@
 package ru.practicum.shareit.user;
 
-import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 public class UserMapper {
