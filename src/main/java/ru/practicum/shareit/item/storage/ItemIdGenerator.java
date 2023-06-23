@@ -7,6 +7,9 @@ public class ItemIdGenerator {
         id = 0;
     }
 
+    private ItemIdGenerator() {
+    }
+
     public static Integer getId() {
         id += 1;
         return id;

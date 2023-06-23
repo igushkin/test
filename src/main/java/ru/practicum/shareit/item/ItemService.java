@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ItemService {
 
     private final ItemStorage itemStorage;
@@ -20,10 +22,12 @@ public class ItemService {
     }
 
     public ItemDto getItemById(Integer id) {
+        log.info("Получен запрос к методу: {}. Значение параметра: {}", "getItemById", id);
         return ItemMapper.toItemDto(itemStorage.getItemById(id));
     }
 
     public List<ItemDto> getAllByUserId(Integer userId) {
+        log.info("Получен запрос к методу: {}. Значение параметра: {}", "getAllByUserId", userId);
         return itemStorage.getItemsByUserId(userId)
                 .stream()
                 .map(x -> ItemMapper.toItemDto(x))
@@ -31,6 +35,7 @@ public class ItemService {
     }
 
     public List<ItemDto> findItemByText(String text) {
+        log.info("Получен запрос к методу: {}. Значение параметра: {}", "findItemByText", text);
         text = text.trim().toLowerCase();
 
         if (Strings.isBlank(text)) {
@@ -44,6 +49,7 @@ public class ItemService {
     }
 
     public ItemDto createItem(Integer userId, ItemDto itemDto) {
+        log.info("Получен запрос к методу: {}. Значение параметра: {}", "createItem", itemDto);
         var validationResult = ItemDtoValidator.validateCreation(itemDto);
 
         if (validationResult.size() > 0) {
@@ -55,6 +61,7 @@ public class ItemService {
 
 
     public ItemDto patchItem(ItemDto itemDto, Integer itemId, Integer userId) {
+        log.info("Получен запрос к методу: {}. Значение параметров: {},{},{}", "patchItem", itemDto, itemId, userId);
         var validationResult = ItemDtoValidator.validatePatch(itemDto);
 
         if (validationResult.size() > 0) {

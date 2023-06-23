@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserService {
 
     private final UserStorage userStorage;
@@ -21,6 +23,7 @@ public class UserService {
     }
 
     public List<UserDto> getUsers() {
+        log.info("Получен запрос к методу: {}.", "getUsers");
         return userStorage.getUsers()
                 .stream()
                 .map(x -> UserMapper.toUserDto(x))
@@ -28,10 +31,12 @@ public class UserService {
     }
 
     public UserDto getUserById(Integer id) {
+        log.info("Получен запрос к методу: {}. Значение параметров: {}.", "getUserById", id);
         return UserMapper.toUserDto(userStorage.getUserById(id));
     }
 
     public UserDto createUser(UserDto userDto) {
+        log.info("Получен запрос к методу: {}. Значение параметров: {}.", "createUser", userDto);
         var validationResult = UserDtoValidator.validateCreation(userDto);
 
         if (validationResult.size() > 0) {
@@ -42,6 +47,7 @@ public class UserService {
     }
 
     public UserDto patchUser(UserDto userDto, Integer userId) {
+        log.info("Получен запрос к методу: {}. Значение параметров: {}, {}.", "patchUser", userDto, userId);
         var validationResult = UserDtoValidator.validatePatch(userDto);
 
         if (validationResult.size() > 0) {
@@ -61,6 +67,7 @@ public class UserService {
     }
 
     public void deleteUser(Integer id) {
+        log.info("Получен запрос к методу: {}. Значение параметров: {}, {}.", "deleteUser", id);
         userStorage.deleteUser(id);
     }
 }
