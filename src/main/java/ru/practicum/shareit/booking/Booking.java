@@ -4,7 +4,6 @@ import lombok.Data;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 
 /**
