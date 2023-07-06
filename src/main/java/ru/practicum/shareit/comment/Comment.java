@@ -1,20 +1,22 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.comment;
 
 import lombok.Data;
+import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
-@Data
 @Entity
-public class ItemRequest {
+@Data
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String description;
+    private String text;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User requestor;
-    private Timestamp created;
+    private User author;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
+    private Item item;
 }

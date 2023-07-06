@@ -2,9 +2,12 @@ package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoValidator;
+import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.item.storage.ItemStorage;
 
 import java.security.InvalidParameterException;
@@ -16,19 +19,30 @@ import java.util.stream.Collectors;
 public class ItemService {
 
     private final ItemStorage itemStorage;
+    private final ItemRepository itemRepository;
 
-    public ItemService(ItemStorage itemStorage) {
+    @Autowired
+    public ItemService(ItemStorage itemStorage, ItemRepository itemRepository) {
         this.itemStorage = itemStorage;
+        this.itemRepository = itemRepository;
     }
 
     public ItemDto getItemById(Integer id) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}", "getItemById", id);
-        return ItemMapper.toItemDto(itemStorage.getItemById(id));
+
+        var item = itemRepository.findById(id);
+
+        if (item.isEmpty()) {
+            throw new NotFoundException("Item was not found");
+        }
+
+        return ItemMapper.toItemDto(item.get());
     }
 
     public List<ItemDto> getAllByUserId(Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}", "getAllByUserId", userId);
-        return itemStorage.getItemsByUserId(userId)
+
+        return itemRepository.findByOwnerId(userId)
                 .stream()
                 .map(x -> ItemMapper.toItemDto(x))
                 .collect(Collectors.toList());
@@ -42,7 +56,8 @@ public class ItemService {
             return List.of();
         }
 
-        return itemStorage.findAvailableItemsByText(text)
+        return itemRepository
+                .search(text)
                 .stream()
                 .map(x -> ItemMapper.toItemDto(x))
                 .collect(Collectors.toList());
@@ -56,7 +71,9 @@ public class ItemService {
             throw new InvalidParameterException(validationResult.get(0));
         }
 
-        return ItemMapper.toItemDto(itemStorage.createItem(userId, ItemMapper.toItem(itemDto)));
+        var item = itemRepository.save(ItemMapper.toItem(itemDto));
+
+        return ItemMapper.toItemDto(item);
     }
 
 
@@ -69,19 +86,21 @@ public class ItemService {
         }
 
         var item = ItemMapper.toItem(itemDto);
-        Item result = null;
+        Item itemFromDb = itemRepository.findById(itemId).get();
 
         if (item.getName() != null) {
-            result = itemStorage.patchItemName(item, itemId, userId);
+            itemFromDb.setName(itemDto.getName());
+            //itemFromDb = itemStorage.patchItemName(item, itemId, userId);
         }
         if (item.getDescription() != null) {
-            result = itemStorage.patchItemDescription(item, itemId, userId);
+            itemFromDb.setDescription(itemDto.getDescription());
+            //itemFromDb = itemStorage.patchItemDescription(item, itemId, userId);
         }
         if (item.getAvailable() != null) {
-            result = itemStorage.patchItemStatus(item, itemId, userId);
+            itemFromDb.setAvailable(itemDto.getAvailable());
+            //itemFromDb = itemStorage.patchItemStatus(item, itemId, userId);
         }
 
-        return ItemMapper.toItemDto(result);
-
+        return ItemMapper.toItemDto(itemFromDb);
     }
 }
