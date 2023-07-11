@@ -13,7 +13,6 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.storage.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemRepository;
-import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
@@ -26,16 +25,13 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class ItemService {
-
-    private final ItemStorage itemStorage;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
 
     @Autowired
-    public ItemService(ItemStorage itemStorage, ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository, CommentRepository commentRepository) {
-        this.itemStorage = itemStorage;
+    public ItemService(ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository, CommentRepository commentRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
@@ -43,7 +39,7 @@ public class ItemService {
     }
 
     public ItemDto getItemById(Integer itemId, Integer userId) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "getItemById", itemId);
+        log.info("Получен запрос к методу: {}. Значение параметра: {}, {}", "getItemById", itemId, userId);
 
         var item = itemRepository.findById(itemId);
 
@@ -85,6 +81,7 @@ public class ItemService {
                 .stream()
                 .map(x -> BookingMapper.toBookingDto(x))
                 .collect(Collectors.toList());
+
         var lastBookings = allBookings
                 .stream()
                 .filter(x -> x.getStart().isBefore(LocalDateTime.now()))
@@ -108,13 +105,14 @@ public class ItemService {
                 .stream()
                 .collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue().stream().map(v -> CommentMapper.toCommentDto(v)).collect(Collectors.toList())));
 
-        for (ItemDto i : items) {
-            var lastBooking = lastBookings.containsKey(i.getId()) ? lastBookings.get(i.getId()).orElse(null) : null;
-            var nextBooking = nextBookings.containsKey(i.getId()) ? nextBookings.get(i.getId()).orElse(null) : null;
-            List<CommentDto> itemComments = comments.containsKey(i.getId()) ? comments.get(i.getId()) : List.of();
-            i.setLastBooking(lastBooking);
-            i.setNextBooking(nextBooking);
-            i.setComments(itemComments);
+        for (ItemDto itemDto : items) {
+            var lastBooking = lastBookings.containsKey(itemDto.getId()) ? lastBookings.get(itemDto.getId()).orElse(null) : null;
+            var nextBooking = nextBookings.containsKey(itemDto.getId()) ? nextBookings.get(itemDto.getId()).orElse(null) : null;
+            List<CommentDto> itemComments = comments.containsKey(itemDto.getId()) ? comments.get(itemDto.getId()) : List.of();
+
+            itemDto.setLastBooking(lastBooking);
+            itemDto.setNextBooking(nextBooking);
+            itemDto.setComments(itemComments);
         }
 
         return items;
@@ -136,7 +134,7 @@ public class ItemService {
     }
 
     public ItemDto createItem(Integer userId, ItemDto itemDto) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "createItem", itemDto);
+        log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "createItem", userId, itemDto);
         var validationResult = ItemDtoValidator.validateCreation(itemDto);
 
         if (validationResult.size() > 0) {
@@ -148,7 +146,7 @@ public class ItemService {
         try {
             owner = userRepository.findById(userId).get();
         } catch (Exception e) {
-            throw new NotFoundException("");
+            throw new NotFoundException("Пользователь не найден");
         }
 
         var item = ItemMapper.toItem(itemDto);
@@ -169,8 +167,8 @@ public class ItemService {
 
         Item itemFromDb = itemRepository.findById(itemId).get();
 
-        if (itemFromDb.getOwner().getId() != userId) {
-            throw new ConsistencyException("");
+        if (!itemFromDb.getOwner().getId().equals(userId)) {
+            throw new ConsistencyException("Обновление доступно только владельщу вещи");
         }
 
         if (itemDto.getName() != null) {
@@ -187,11 +185,13 @@ public class ItemService {
     }
 
     public CommentDto createComment(Integer userId, Integer itemId, Comment comment) {
+        log.info("Получен запрос к методу: {}. Значение параметров: {},{},{}", "createComment", userId, itemId, comment);
+
         var item = itemRepository.findById(itemId);
         var user = userRepository.findById(userId);
 
         if (item.isEmpty() || user.isEmpty()) {
-            throw new NotFoundException("");
+            throw new NotFoundException("Переданые неверые идентификаторы");
         }
 
         if (Strings.isBlank(comment.getText())) {

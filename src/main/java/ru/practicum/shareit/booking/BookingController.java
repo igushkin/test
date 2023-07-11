@@ -25,39 +25,34 @@ public class BookingController {
     }
 
     @PostMapping()
-    public BookingExtendedDto test(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestBody BookingDto bookingDto) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "createItem", bookingDto);
+    public BookingExtendedDto createBooking(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestBody BookingDto bookingDto) {
+        log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "createBooking", userId, bookingDto);
         return bookingService.createBooking(userId, bookingDto);
     }
 
     @GetMapping("{bookingId}")
     public BookingExtendedDto getBookingById(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @PathVariable Integer bookingId) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "createItem", "s");
+        log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "getBookingById", userId, bookingId);
         return bookingService.getBookingById(userId, bookingId);
     }
 
     @GetMapping("/owner")
     public List<BookingExtendedDto> getBookingsByOwnerId(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestParam(name = "state", required = false, defaultValue = "ALL") BookingState state) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "createItem", "s");
+        log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "getBookingsByOwnerId", userId, state);
         return bookingService.getBookingsByOwnerId(userId, state);
     }
 
-
     @GetMapping()
     public List<BookingExtendedDto> getAllBookingsByUserId(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestParam(name = "state", required = false, defaultValue = "ALL") BookingState state) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "createItem", "s");
-        var res = bookingService.getAllBookingsByUserId(userId, state);
-
-        return res;
+        log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "getAllBookingsByUserId", userId, state);
+        return bookingService.getAllBookingsByUserId(userId, state);
     }
 
-
     @PatchMapping("{bookingId}")
-    public BookingExtendedDto test(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @PathVariable Integer bookingId, @RequestParam(name = "approved") Boolean approved) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "createItem", approved);
+    public BookingExtendedDto setBookingStatus(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @PathVariable Integer bookingId, @RequestParam(name = "approved") Boolean approved) {
+        log.info("Получен запрос к методу: {}. Значение параметров: {}, {}, {}", "setBookingStatus", userId, bookingId, approved);
         var bookingStatus = approved ? BookingStatus.APPROVED : BookingStatus.REJECTED;
-        var res = bookingService.setBookingStatus(userId, bookingId, bookingStatus);
-        return res;
+        return bookingService.setBookingStatus(userId, bookingId, bookingStatus);
     }
 
     @ExceptionHandler({Exception.class})

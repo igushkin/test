@@ -17,7 +17,7 @@ public class BookingExtendedDto extends BookingDto {
     private UserDto booker;
 
     public BookingExtendedDto(Integer bookingId, LocalDateTime start, LocalDateTime end, ItemDto itemDto, UserDto userDto, BookingStatus status) {
-        super(bookingId, start, end, itemDto.getId(), userDto.getId(), status);
+        super(bookingId, start, end, status, itemDto.getId(), userDto.getId());
         this.item = itemDto;
         this.booker = userDto;
     }

@@ -27,13 +27,13 @@ public class ItemController {
 
     @GetMapping("{id}")
     public ItemDto getItemById(@PathVariable Integer id, @RequestHeader(value = "X-Sharer-User-Id") Integer userId) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "getItemById", id);
+        log.info("Получен запрос к методу: {}. Значение параметра: {}, {}", "getItemById", id, userId);
         return itemService.getItemById(id, userId);
     }
 
     @GetMapping
     public List<ItemDto> getAllByUserId(@RequestHeader(value = "X-Sharer-User-Id") Integer userId) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "getAllByUserId", userId);
+        log.info("Получен запрос к методу: {}. Значение параметра: {}", "getItemById", userId);
         return itemService.getAllByUserId(userId);
     }
 
@@ -45,19 +45,19 @@ public class ItemController {
 
     @PostMapping
     public ItemDto createItem(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @Valid @RequestBody ItemDto item) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "createItem", item);
+        log.info("Получен запрос к методу: {}. Значение параметра: {}, {}", "createItem", userId, item);
         return itemService.createItem(userId, item);
     }
 
     @PatchMapping("{id}")
     public ItemDto patchItem(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestBody ItemDto item, @PathVariable Integer id) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "patchItem", id);
+        log.info("Получен запрос к методу: {}. Значение параметра: {}, {}, {}", "patchItem", userId, item, id);
         return itemService.patchItem(item, id, userId);
     }
 
     @PostMapping("/{itemId}/comment")
     public CommentDto addComment(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestBody Comment comment, @PathVariable Integer itemId) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "patchItem", "asd");
+        log.info("Получен запрос к методу: {}. Значение параметра: {}, {}, {}", "addComment", userId, comment, itemId);
         return itemService.createComment(userId, itemId, comment);
     }
 

@@ -9,14 +9,13 @@ import ru.practicum.shareit.booking.dto.BookingExtendedDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.security.InvalidParameterException;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,16 +34,18 @@ public class BookingService {
         this.itemRepository = itemRepository;
     }
 
-    public List<BookingExtendedDto> te() {
-        return bookingRepository.findAllFutureBookingsByUserIdWithFetch(1, LocalDateTime.now())
-                .stream()
-                .map(x -> BookingMapper.toExtendedBookingDto(x))
-                .collect(Collectors.toList());
-    }
-
     public BookingExtendedDto createBooking(Integer userId, BookingDto bookingDto) {
-        var user = userRepository.findById(userId);
-        var item = itemRepository.findById(bookingDto.getItemId());
+        log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "createBooking", userId, bookingDto);
+
+        User user = null;
+        Item item = null;
+
+        try {
+            user = userRepository.findById(userId).get();
+            item = itemRepository.findById(bookingDto.getItemId()).get();
+        } catch (Exception e) {
+            throw new NotFoundException("Не найдены связанные сущности." + e.getMessage());
+        }
 
         var validationResult = BookingDTOValidator.validateCreation(bookingDto);
 
@@ -52,35 +53,16 @@ public class BookingService {
             throw new InvalidParameterException(validationResult.get(0));
         }
 
-        if (user.isEmpty()) {
-            throw new NotFoundException("");
-        }
-        if (item.isEmpty()) {
-            throw new NotFoundException("");
-        }
-        if (!item.get().getAvailable()) {
+        if (!item.getAvailable()) {
             throw new InvalidParameterException("");
         }
-        if (bookingDto.getEnd().toInstant(ZoneOffset.UTC).isBefore(Instant.now())) {
-            throw new InvalidParameterException();
-        }
-        if (bookingDto.getEnd().isBefore(bookingDto.getStart())) {
-            throw new InvalidParameterException();
-        }
-        if (bookingDto.getEnd().isEqual(bookingDto.getStart())) {
-            throw new InvalidParameterException();
-        }
-        if (bookingDto.getStart().toInstant(ZoneOffset.UTC).isBefore(Instant.now())) {
-            throw new InvalidParameterException();
-        }
-        if (item.get().getOwner().getId().equals(userId)) {
+        if (item.getOwner().getId().equals(userId)) {
             throw new NotFoundException("");
         }
 
-
         var booking = BookingMapper.toBooking(bookingDto);
-        booking.setBooker(user.get());
-        booking.setItem(item.get());
+        booking.setBooker(user);
+        booking.setItem(item);
         booking.setStatus(BookingStatus.WAITING);
         booking = bookingRepository.save(booking);
 
@@ -88,9 +70,11 @@ public class BookingService {
     }
 
     public List<BookingExtendedDto> getBookingsByOwnerId(Integer userId, BookingState bookingState) {
+        log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "getBookingsByOwnerId", userId, bookingState);
 
-        if (bookingRepository.findOwnerById(userId).size() == 0)
-            throw new NotFoundException("");
+        if (bookingRepository.findOwnerById(userId).size() == 0) {
+            throw new NotFoundException("Владелец вещи не найден");
+        }
 
         List<Booking> bookings;
 
@@ -122,6 +106,8 @@ public class BookingService {
     }
 
     public BookingExtendedDto getBookingById(Integer userId, Integer bookingId) {
+        log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "getBookingById", userId, bookingId);
+
         Booking booking = null;
         User user = null;
 
@@ -133,61 +119,61 @@ public class BookingService {
         }
 
         if (!userId.equals(booking.getBooker().getId()) && !userId.equals(booking.getItem().getOwner().getId())) {
-            throw new NotFoundException("");
+            throw new NotFoundException("Пользователь не является ни владельцем ни арендователем");
         }
 
         return BookingMapper.toExtendedBookingDto(booking);
     }
 
     public List<BookingExtendedDto> getAllBookingsByUserId(Integer userId, BookingState bookingState) {
+        log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "getAllBookingsByUserId", userId, bookingState);
 
         try {
             userRepository.findById(userId).get();
         } catch (Exception e) {
-            throw new NotFoundException("");
+            throw new NotFoundException("Пользователь не найден");
         }
+
+        List<Booking> bookings;
+
         switch (bookingState) {
             case ALL:
-                return bookingRepository.findAllBookingsByUserIdAndStatusWithFetch(userId, null)
-                        .stream()
-                        .map(x -> BookingMapper.toExtendedBookingDto(x))
-                        .collect(Collectors.toList());
+                bookings = bookingRepository.findAllBookingsByUserIdAndStatusWithFetch(userId, null);
+                break;
             case WAITING:
             case REJECTED:
                 var bookingStatus = bookingState.equals(BookingState.WAITING) ? BookingStatus.WAITING.toString() : BookingStatus.REJECTED.toString();
-                return bookingRepository.findAllBookingsByUserIdAndStatusWithFetch(userId, bookingStatus)
-                        .stream()
-                        .map(x -> BookingMapper.toExtendedBookingDto(x))
-                        .collect(Collectors.toList());
+                bookings = bookingRepository.findAllBookingsByUserIdAndStatusWithFetch(userId, bookingStatus);
+                break;
             case CURRENT:
-                return bookingRepository.findAllCurrentBookingsByUserIdWithFetch(userId, LocalDateTime.now())
-                        .stream()
-                        .map(x -> BookingMapper.toExtendedBookingDto(x))
-                        .collect(Collectors.toList());
+                bookings = bookingRepository.findAllCurrentBookingsByUserIdWithFetch(userId, LocalDateTime.now());
+                break;
             case PAST:
-                return bookingRepository.findAllPastBookingsByUserIdWithFetch(userId, LocalDateTime.now())
-                        .stream()
-                        .map(x -> BookingMapper.toExtendedBookingDto(x))
-                        .collect(Collectors.toList());
+                bookings = bookingRepository.findAllPastBookingsByUserIdWithFetch(userId, LocalDateTime.now());
+                break;
             case FUTURE:
-                return bookingRepository.findAllFutureBookingsByUserIdWithFetch(userId, LocalDateTime.now())
-                        .stream()
-                        .map(x -> BookingMapper.toExtendedBookingDto(x))
-                        .collect(Collectors.toList());
+                bookings = bookingRepository.findAllFutureBookingsByUserIdWithFetch(userId, LocalDateTime.now());
+                break;
             default:
                 throw new NotFoundException("");
         }
+
+        return bookings.stream()
+                .map(x -> BookingMapper.toExtendedBookingDto(x))
+                .collect(Collectors.toList());
     }
 
     public BookingExtendedDto setBookingStatus(Integer userId, Integer bookingId, BookingStatus bookingStatus) {
+        log.info("Получен запрос к методу: {}. Значение параметров: {}, {}, {}", "setBookingStatus", userId, bookingId, bookingStatus);
+
         var booking = bookingRepository.findById(bookingId).get();
 
         if (!booking.getStatus().equals(BookingStatus.WAITING)) {
-            throw new InvalidParameterException("");
+            throw new InvalidParameterException("Статус бронирования не может быть изменен");
         }
 
         if (!booking.getItem().getOwner().getId().equals(userId)) {
-            throw new NotFoundException("");
+            throw new NotFoundException("Статус может быть изменен только владельцем вещи");
         }
 
         booking.setStatus(bookingStatus);
