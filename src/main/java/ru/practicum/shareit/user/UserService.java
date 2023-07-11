@@ -32,11 +32,6 @@ public class UserService {
                 .stream()
                 .map(x -> UserMapper.toUserDto(x))
                 .collect(Collectors.toList());
-
-        /*return userStorage.getUsers()
-                .stream()
-                .map(x -> UserMapper.toUserDto(x))
-                .collect(Collectors.toList());*/
     }
 
     public UserDto getUserById(Integer id) {
@@ -89,6 +84,5 @@ public class UserService {
     public void deleteUser(Integer id) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}.", "deleteUser", id);
         userRepository.deleteById(id);
-        //userStorage.deleteUser(id);
     }
 }

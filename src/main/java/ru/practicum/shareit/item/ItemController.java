@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.ConsistencyException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
@@ -25,9 +26,9 @@ public class ItemController {
     }
 
     @GetMapping("{id}")
-    public ItemDto getItemById(@PathVariable Integer id) {
+    public ItemDto getItemById(@PathVariable Integer id, @RequestHeader(value = "X-Sharer-User-Id") Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}", "getItemById", id);
-        return itemService.getItemById(id);
+        return itemService.getItemById(id, userId);
     }
 
     @GetMapping
@@ -52,6 +53,12 @@ public class ItemController {
     public ItemDto patchItem(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestBody ItemDto item, @PathVariable Integer id) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}", "patchItem", id);
         return itemService.patchItem(item, id, userId);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestBody Comment comment, @PathVariable Integer itemId) {
+        log.info("Получен запрос к методу: {}. Значение параметра: {}", "patchItem", "asd");
+        return itemService.createComment(userId, itemId, comment);
     }
 
     @ExceptionHandler({NotFoundException.class})
