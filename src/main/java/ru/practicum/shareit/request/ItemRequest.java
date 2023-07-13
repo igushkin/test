@@ -1,12 +1,14 @@
 package ru.practicum.shareit.request;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
-@Data
+@Getter
+@Setter
 @Entity
 public class ItemRequest {
     @Id

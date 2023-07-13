@@ -3,6 +3,8 @@ package ru.practicum.shareit.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.DuplicateKeyException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserDtoValidator;
@@ -46,6 +48,7 @@ public class UserService {
         return UserMapper.toUserDto(user.get());
     }
 
+    @Transactional
     public UserDto createUser(UserDto userDto) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}.", "createUser", userDto);
         var validationResult = UserDtoValidator.validateCreation(userDto);
@@ -54,11 +57,18 @@ public class UserService {
             throw new InvalidParameterException(validationResult.get(0));
         }
 
-        var user = userRepository.save(UserMapper.toUser(userDto));
+        User user;
+
+        try {
+            user = userRepository.save(UserMapper.toUser(userDto));
+        } catch (Exception e) {
+            throw new DuplicateKeyException("Пользователь с таким email уже существует");
+        }
 
         return UserMapper.toUserDto(user);
     }
 
+    @Transactional
     public UserDto patchUser(UserDto userDto, Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}.", "patchUser", userDto, userId);
         var validationResult = UserDtoValidator.validatePatch(userDto);
@@ -76,11 +86,16 @@ public class UserService {
             userFromDB.setEmail(userDto.getEmail());
         }
 
-        userRepository.save(userFromDB);
+        try {
+            userRepository.saveAndFlush(userFromDB);
+        } catch (Exception e) {
+            throw new DuplicateKeyException("Пользователь с таким email уже существует");
+        }
 
         return UserMapper.toUserDto(userFromDB);
     }
 
+    @Transactional
     public void deleteUser(Integer id) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}.", "deleteUser", id);
         userRepository.deleteById(id);

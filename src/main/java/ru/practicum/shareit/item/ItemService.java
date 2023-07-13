@@ -5,6 +5,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.storage.BookingRepository;
@@ -133,6 +134,7 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public ItemDto createItem(Integer userId, ItemDto itemDto) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "createItem", userId, itemDto);
         var validationResult = ItemDtoValidator.validateCreation(itemDto);
@@ -156,7 +158,7 @@ public class ItemService {
         return ItemMapper.toItemDto(item);
     }
 
-
+    @Transactional
     public ItemDto patchItem(ItemDto itemDto, Integer itemId, Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметров: {},{},{}", "patchItem", itemDto, itemId, userId);
         var validationResult = ItemDtoValidator.validatePatch(itemDto);
@@ -184,6 +186,7 @@ public class ItemService {
         return ItemMapper.toItemDto(itemRepository.save(itemFromDb));
     }
 
+    @Transactional
     public CommentDto createComment(Integer userId, Integer itemId, Comment comment) {
         log.info("Получен запрос к методу: {}. Значение параметров: {},{},{}", "createComment", userId, itemId, comment);
 

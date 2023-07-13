@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.dto;
 
+import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.util.Strings;
 import ru.practicum.shareit.item.dto.ItemDto;
 
@@ -8,10 +9,8 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class BookingDTOValidator {
-    private BookingDTOValidator() {
-    }
-
     public static List<String> validateCreation(BookingDto bookingDto) {
         List<String> errMessages = new ArrayList<>();
 

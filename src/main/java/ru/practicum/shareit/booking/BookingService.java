@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDTOValidator;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingExtendedDto;
@@ -34,6 +35,7 @@ public class BookingService {
         this.itemRepository = itemRepository;
     }
 
+    @Transactional
     public BookingExtendedDto createBooking(Integer userId, BookingDto bookingDto) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "createBooking", userId, bookingDto);
 
@@ -163,6 +165,7 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public BookingExtendedDto setBookingStatus(Integer userId, Integer bookingId, BookingStatus bookingStatus) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}, {}", "setBookingStatus", userId, bookingId, bookingStatus);
 

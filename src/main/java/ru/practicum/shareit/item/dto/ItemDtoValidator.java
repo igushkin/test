@@ -1,14 +1,13 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.util.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class ItemDtoValidator {
-    private ItemDtoValidator() {
-    }
-
     public static List<String> validateCreation(ItemDto itemDto) {
         List<String> errMessages = new ArrayList<>();
 
