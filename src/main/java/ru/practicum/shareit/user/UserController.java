@@ -2,14 +2,10 @@ package ru.practicum.shareit.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.DuplicateKeyException;
-import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.Valid;
-import java.security.InvalidParameterException;
 import java.util.List;
 
 @RestController
@@ -52,23 +48,5 @@ public class UserController {
     public void deleteUser(@PathVariable Integer id) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}", "deleteUser", id);
         userService.deleteUser(id);
-    }
-
-    @ExceptionHandler({InvalidParameterException.class})
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public String handleException(Exception e) {
-        return e.getMessage();
-    }
-
-    @ExceptionHandler({NotFoundException.class})
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public String handleException(NotFoundException e) {
-        return e.getMessage();
-    }
-
-    @ExceptionHandler({DuplicateKeyException.class})
-    @ResponseStatus(value = HttpStatus.CONFLICT)
-    public String handleException(DuplicateKeyException e) {
-        return e.getMessage();
     }
 }

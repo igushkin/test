@@ -2,14 +2,11 @@ package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.ConsistencyException;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
-import java.security.InvalidParameterException;
 import java.util.List;
 
 @RestController
@@ -25,14 +22,14 @@ public class ItemController {
     }
 
     @GetMapping("{id}")
-    public ItemDto getItemById(@PathVariable Integer id) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "getItemById", id);
-        return itemService.getItemById(id);
+    public ItemDto getItemById(@PathVariable Integer id, @RequestHeader(value = "X-Sharer-User-Id") Integer userId) {
+        log.info("Получен запрос к методу: {}. Значение параметра: {}, {}", "getItemById", id, userId);
+        return itemService.getItemById(id, userId);
     }
 
     @GetMapping
     public List<ItemDto> getAllByUserId(@RequestHeader(value = "X-Sharer-User-Id") Integer userId) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "getAllByUserId", userId);
+        log.info("Получен запрос к методу: {}. Значение параметра: {}", "getItemById", userId);
         return itemService.getAllByUserId(userId);
     }
 
@@ -44,31 +41,19 @@ public class ItemController {
 
     @PostMapping
     public ItemDto createItem(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @Valid @RequestBody ItemDto item) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "createItem", item);
+        log.info("Получен запрос к методу: {}. Значение параметра: {}, {}", "createItem", userId, item);
         return itemService.createItem(userId, item);
     }
 
     @PatchMapping("{id}")
     public ItemDto patchItem(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestBody ItemDto item, @PathVariable Integer id) {
-        log.info("Получен запрос к методу: {}. Значение параметра: {}", "patchItem", id);
+        log.info("Получен запрос к методу: {}. Значение параметра: {}, {}, {}", "patchItem", userId, item, id);
         return itemService.patchItem(item, id, userId);
     }
 
-    @ExceptionHandler({NotFoundException.class})
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public String handleException(Exception e) {
-        return e.getMessage();
-    }
-
-    @ExceptionHandler({InvalidParameterException.class})
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public String handleException(RuntimeException e) {
-        return e.getMessage();
-    }
-
-    @ExceptionHandler({ConsistencyException.class})
-    @ResponseStatus(value = HttpStatus.FORBIDDEN)
-    public String handleException(ConsistencyException e) {
-        return e.getMessage();
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestBody Comment comment, @PathVariable Integer itemId) {
+        log.info("Получен запрос к методу: {}. Значение параметра: {}, {}, {}", "addComment", userId, comment, itemId);
+        return itemService.createComment(userId, itemId, comment);
     }
 }
