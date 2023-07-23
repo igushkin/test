@@ -2,14 +2,16 @@ package ru.practicum.shareit.item.storage;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.Item;
 
 import java.util.List;
 
-@Component
+@Repository
 public interface ItemRepository extends JpaRepository<Item, Integer> {
     List<Item> findByOwnerId(Integer userId);
+
+    List<Item> findAllByRequestIdIn(List<Integer> ids);
 
     @Query("select i from Item i " +
             "where (upper(i.name) like upper(concat('%', ?1, '%')) " +

@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDTOValidator;
@@ -71,32 +72,39 @@ public class BookingService {
         return BookingMapper.toExtendedBookingDto(booking);
     }
 
-    public List<BookingExtendedDto> getBookingsByOwnerId(Integer userId, BookingState bookingState) {
+    public List<BookingExtendedDto> getBookingsByOwnerId(Integer userId, BookingState bookingState, Integer from, Integer size) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "getBookingsByOwnerId", userId, bookingState);
 
         if (bookingRepository.findOwnerById(userId).size() == 0) {
             throw new NotFoundException("Владелец вещи не найден");
         }
 
+        if (from == null && size == null) {
+            from = 0;
+            size = Integer.MAX_VALUE;
+        }
+
+        var pageRequest = getPage(from, size);
+
         List<Booking> bookings;
 
         switch (bookingState) {
             case ALL:
-                bookings = bookingRepository.findAllBookingsByOwnerId(userId, null);
+                bookings = bookingRepository.findAllBookingsByOwnerId(userId, null, pageRequest);
                 break;
             case WAITING:
             case REJECTED:
                 var bookingStatus = bookingState.equals(BookingState.WAITING) ? BookingStatus.WAITING.toString() : BookingStatus.REJECTED.toString();
-                bookings = bookingRepository.findAllBookingsByOwnerId(userId, bookingStatus);
+                bookings = bookingRepository.findAllBookingsByOwnerId(userId, bookingStatus, pageRequest);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findAllCurrentBookingsByOwnerIdWithFetch(userId, LocalDateTime.now());
+                bookings = bookingRepository.findAllCurrentBookingsByOwnerIdWithFetch(userId, LocalDateTime.now(), pageRequest);
                 break;
             case PAST:
-                bookings = bookingRepository.findAllPastBookingsByOwnerIdWithFetch(userId, LocalDateTime.now());
+                bookings = bookingRepository.findAllPastBookingsByOwnerIdWithFetch(userId, LocalDateTime.now(), pageRequest);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findAllFutureBookingsByOwnerIdWithFetch(userId, LocalDateTime.now());
+                bookings = bookingRepository.findAllFutureBookingsByOwnerIdWithFetch(userId, LocalDateTime.now(), pageRequest);
                 break;
             default:
                 throw new NotFoundException("");
@@ -127,7 +135,7 @@ public class BookingService {
         return BookingMapper.toExtendedBookingDto(booking);
     }
 
-    public List<BookingExtendedDto> getAllBookingsByUserId(Integer userId, BookingState bookingState) {
+    public List<BookingExtendedDto> getAllBookingsByUserId(Integer userId, BookingState bookingState, Integer from, Integer size) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "getAllBookingsByUserId", userId, bookingState);
 
         try {
@@ -138,23 +146,30 @@ public class BookingService {
 
         List<Booking> bookings;
 
+        if (from == null && size == null) {
+            from = 0;
+            size = Integer.MAX_VALUE;
+        }
+
+        PageRequest pageRequest = getPage(from, size);
+
         switch (bookingState) {
             case ALL:
-                bookings = bookingRepository.findAllBookingsByUserIdAndStatusWithFetch(userId, null);
+                bookings = bookingRepository.findAllBookingsByUserIdAndStatusWithFetch(userId, null, pageRequest);
                 break;
             case WAITING:
             case REJECTED:
                 var bookingStatus = bookingState.equals(BookingState.WAITING) ? BookingStatus.WAITING.toString() : BookingStatus.REJECTED.toString();
-                bookings = bookingRepository.findAllBookingsByUserIdAndStatusWithFetch(userId, bookingStatus);
+                bookings = bookingRepository.findAllBookingsByUserIdAndStatusWithFetch(userId, bookingStatus, pageRequest);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findAllCurrentBookingsByUserIdWithFetch(userId, LocalDateTime.now());
+                bookings = bookingRepository.findAllCurrentBookingsByUserIdWithFetch(userId, LocalDateTime.now(), pageRequest);
                 break;
             case PAST:
-                bookings = bookingRepository.findAllPastBookingsByUserIdWithFetch(userId, LocalDateTime.now());
+                bookings = bookingRepository.findAllPastBookingsByUserIdWithFetch(userId, LocalDateTime.now(), pageRequest);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findAllFutureBookingsByUserIdWithFetch(userId, LocalDateTime.now());
+                bookings = bookingRepository.findAllFutureBookingsByUserIdWithFetch(userId, LocalDateTime.now(), pageRequest);
                 break;
             default:
                 throw new NotFoundException("");
@@ -182,5 +197,15 @@ public class BookingService {
         booking.setStatus(bookingStatus);
         booking = bookingRepository.save(booking);
         return BookingMapper.toExtendedBookingDto(booking);
+    }
+
+    private PageRequest getPage(Integer from, Integer size) {
+        if (from < 0 || size < 1) {
+            throw new RuntimeException("Not valid page arams");
+        }
+
+        var pageIndex = from / size;
+
+        return PageRequest.of(pageIndex, size);
     }
 }

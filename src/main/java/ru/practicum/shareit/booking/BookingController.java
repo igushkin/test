@@ -32,15 +32,23 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public List<BookingExtendedDto> getBookingsByOwnerId(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestParam(name = "state", required = false, defaultValue = "ALL") BookingState state) {
+    public List<BookingExtendedDto> getBookingsByOwnerId(
+            @RequestHeader(value = "X-Sharer-User-Id") Integer userId,
+            @RequestParam(name = "state", required = false, defaultValue = "ALL") BookingState state,
+            @RequestParam(required = false) Integer from,
+            @RequestParam(required = false) Integer size) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "getBookingsByOwnerId", userId, state);
-        return bookingService.getBookingsByOwnerId(userId, state);
+        return bookingService.getBookingsByOwnerId(userId, state, from, size);
     }
 
     @GetMapping
-    public List<BookingExtendedDto> getAllBookingsByUserId(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestParam(name = "state", required = false, defaultValue = "ALL") BookingState state) {
+    public List<BookingExtendedDto> getAllBookingsByUserId(
+            @RequestHeader(value = "X-Sharer-User-Id") Integer userId,
+            @RequestParam(name = "state", required = false, defaultValue = "ALL") BookingState state,
+            @RequestParam(required = false) Integer from,
+            @RequestParam(required = false) Integer size) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "getAllBookingsByUserId", userId, state);
-        return bookingService.getAllBookingsByUserId(userId, state);
+        return bookingService.getAllBookingsByUserId(userId, state, from, size);
     }
 
     @PatchMapping("{bookingId}")

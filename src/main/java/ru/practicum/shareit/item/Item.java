@@ -1,9 +1,6 @@
 package ru.practicum.shareit.item;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
@@ -15,6 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @NoArgsConstructor
+@Builder
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +26,9 @@ public class Item {
     @ManyToOne()
     @JoinColumn(name = "request_id", referencedColumnName = "id")
     private ItemRequest request;
+    /*    @ManyToOne()
+        @JoinColumn(name = "item_request_id", referencedColumnName = "id")
+        private ItemRequest itemRequest;*/
     @Transient
     private Booking lastBooking;
     @Transient

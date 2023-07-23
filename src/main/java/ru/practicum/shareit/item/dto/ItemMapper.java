@@ -16,8 +16,8 @@ public class ItemMapper {
                 item.getAvailable(),
                 null,
                 null,
-                null
-
+                null,
+                item.getRequest() != null ? item.getRequest().getId() : null
         );
     }
 
@@ -29,7 +29,8 @@ public class ItemMapper {
                 item.getAvailable(),
                 lastBooking,
                 nextBooking,
-                comments
+                comments,
+                item.getRequest() != null ? item.getRequest().getId() : null
         );
     }
 
@@ -42,5 +43,4 @@ public class ItemMapper {
                 null, null, null, null
         );
     }
-
 }
