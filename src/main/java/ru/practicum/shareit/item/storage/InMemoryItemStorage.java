@@ -1,3 +1,4 @@
+/*
 package ru.practicum.shareit.item.storage;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,4 +108,4 @@ public class InMemoryItemStorage implements ItemStorage {
         return originalItem;
     }
 
-}
+}*/

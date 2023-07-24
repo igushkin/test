@@ -12,7 +12,7 @@ public class CommentMapper {
         );
     }
 
-    public static Comment toComment(CommentDto commentDto) {
+/*    public static Comment toComment(CommentDto commentDto) {
         return new Comment(
                 commentDto.getId(),
                 commentDto.getText(),
@@ -20,5 +20,5 @@ public class CommentMapper {
                 null,
                 commentDto.getCreated()
         );
-    }
+    }*/
 }

@@ -11,12 +11,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import ru.practicum.shareit.item.Comment;
-import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.item.ItemController;
-import ru.practicum.shareit.item.ItemService;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingController;
+import ru.practicum.shareit.booking.BookingService;
+import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.booking.dto.BookingExtendedDto;
+import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.user.User;
@@ -32,31 +33,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-public class ItemControllerTest {
+public class BookingControllerTest {
     private final ObjectMapper mapper = new ObjectMapper();
     @Mock
-    private ItemService itemService;
+    private BookingService bookingService;
     @Mock
     private UserRepository userRepository;
     @InjectMocks
-    private ItemController itemController;
+    private BookingController bookingController;
     private MockMvc mvc;
 
-    private ItemDto itemDto;
+    private BookingExtendedDto bookingDto;
     private User user;
     private CommentDto commentDto;
 
     @BeforeEach
     void setUp() {
         mvc = MockMvcBuilders
-                .standaloneSetup(itemController)
+                .standaloneSetup(bookingController)
                 .build();
-
-        itemDto = ItemMapper.toItemDto(Item.builder()
-                .name("item")
-                .description("desc")
-                .available(true)
-                .build());
 
         this.user = User.builder()
                 .name("User")
@@ -64,60 +59,65 @@ public class ItemControllerTest {
                 .id(1)
                 .build();
 
-        this.commentDto = CommentMapper.toCommentDto(Comment.builder()
-                .text("comment")
-                .author(user)
-                .build());
+        var item = ItemDto.builder()
+                .id(1)
+                .available(true)
+                .description("sa")
+                .name("asd")
+                .build();
+
+        bookingDto = BookingMapper.toExtendedBookingDto(
+                Booking.builder()
+                        .booker(user)
+                        .status(BookingStatus.WAITING)
+                        .id(1)
+                        .item(ItemMapper.toItem(item))
+                        .build()
+        );
     }
 
-    // getItemById
-    // getAllByUserId
-    // findItemByText
-    // createItem
-    // patchItem
-    // addComment
+    // createBooking
+    // getBookingById
+    // getBookingsByOwnerId
+    // getAllBookingsByUserId
+    // setBookingStatus
 
     @Test
-    void createItem() throws Exception {
-        Mockito.when(itemService.createItem(Mockito.any(), Mockito.any()))
-                .thenReturn(itemDto);
+    void createBooking() throws Exception {
+        Mockito.when(bookingService.createBooking(Mockito.any(), Mockito.any()))
+                .thenReturn(bookingDto);
 
-        mvc.perform(post("/items")
-                        .content(mapper.writeValueAsString(itemDto))
+        mvc.perform(post("/bookings")
+                        .content(mapper.writeValueAsString(bookingDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(itemDto.getName())))
-                .andExpect(jsonPath("$.description", is(itemDto.getDescription())))
-                .andExpect(jsonPath("$.available", is(itemDto.getAvailable())));
+                .andExpect(jsonPath("$.id", is(bookingDto.getId())));
     }
 
     @Test
-    void getItemById() throws Exception {
-        Mockito.when(itemService.getItemById(Mockito.any(), Mockito.any()))
-                .thenReturn(itemDto);
+    void getBookingById() throws Exception {
+        Mockito.when(bookingService.getBookingById(Mockito.any(), Mockito.any()))
+                .thenReturn(bookingDto);
 
-        mvc.perform(get("/items/" + 1)
-                        .content(mapper.writeValueAsString(itemDto))
+        mvc.perform(get("/bookings/" + 1)
+                        //.content(mapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(itemDto.getName())))
-                .andExpect(jsonPath("$.description", is(itemDto.getDescription())))
-                .andExpect(jsonPath("$.available", is(itemDto.getAvailable())));
+                .andExpect(status().isOk());
     }
 
     @Test
-    void getAllByUserId() throws Exception {
-        Mockito.when(itemService.getAllByUserId(Mockito.any()))
-                .thenReturn(List.of(itemDto));
+    void getBookingsByOwnerId() throws Exception {
+        Mockito.when(bookingService.getBookingsByOwnerId(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(List.of(bookingDto));
 
-        mvc.perform(get("/items")
-                        .content(mapper.writeValueAsString(itemDto))
+        mvc.perform(get("/bookings/owner")
+                        //.content(mapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -127,11 +127,12 @@ public class ItemControllerTest {
     }
 
     @Test
-    void findItemByText() throws Exception {
-        Mockito.when(itemService.findItemByText(Mockito.any()))
-                .thenReturn(List.of(itemDto));
+    void getAllBookingsByUserId() throws Exception {
+        Mockito.when(bookingService.getAllBookingsByUserId(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(List.of(bookingDto));
 
-        mvc.perform(get("/items/search/?text=myquery")
+        mvc.perform(get("/bookings")
+                        //.content(mapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -141,31 +142,26 @@ public class ItemControllerTest {
     }
 
     @Test
-    void patchItem() throws Exception {
-        Mockito.when(itemService.patchItem(Mockito.any(), Mockito.any(), Mockito.any()))
-                .thenReturn(itemDto);
-
-        mvc.perform(patch("/items/1")
-                        .content(mapper.writeValueAsString(itemDto))
+    void getAllBookingsByUserIdExc() throws Exception {
+        mvc.perform(get("/bookings/?state=notknowstate")
+                        //.content(mapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
-                .andExpect(status().isOk());
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
-    void addComment() throws Exception {
-        Mockito.when(itemService.createComment(Mockito.any(), Mockito.any(), Mockito.any()))
-                .thenReturn(commentDto);
+    void setBookingStatus() throws Exception {
+        Mockito.when(bookingService.setBookingStatus(Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(bookingDto);
 
-        mvc.perform(post("/items/1/comment")
-                        .content(mapper.writeValueAsString(commentDto))
+        mvc.perform(patch("/bookings/1/?approved=true")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk());
     }
-
 }

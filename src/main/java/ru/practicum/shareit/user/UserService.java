@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DuplicateKeyException;
@@ -9,7 +9,6 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserDtoValidator;
 import ru.practicum.shareit.user.storage.UserRepository;
-import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.security.InvalidParameterException;
 import java.util.List;
@@ -17,16 +16,11 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
 
-    private final UserStorage userStorage;
     private final UserRepository userRepository;
 
-    @Autowired
-    public UserService(UserStorage userStorage, UserRepository userRepository) {
-        this.userStorage = userStorage;
-        this.userRepository = userRepository;
-    }
 
     public List<UserDto> getUsers() {
         log.info("Получен запрос к методу: {}.", "getUsers");

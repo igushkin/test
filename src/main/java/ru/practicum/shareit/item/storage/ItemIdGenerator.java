@@ -1,3 +1,4 @@
+/*
 package ru.practicum.shareit.item.storage;
 
 import lombok.experimental.UtilityClass;
@@ -14,4 +15,4 @@ public class ItemIdGenerator {
         id += 1;
         return id;
     }
-}
+}*/

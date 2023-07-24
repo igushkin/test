@@ -1,3 +1,4 @@
+/*
 package ru.practicum.shareit.user.storage;
 
 import lombok.experimental.UtilityClass;
@@ -14,4 +15,4 @@ public class UserIdGenerator {
         id += 1;
         return id;
     }
-}
+}*/

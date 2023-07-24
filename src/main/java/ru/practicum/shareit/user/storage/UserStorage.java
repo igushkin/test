@@ -1,3 +1,4 @@
+/*
 package ru.practicum.shareit.user.storage;
 
 import ru.practicum.shareit.user.User;
@@ -16,4 +17,4 @@ public interface UserStorage {
     User patchUserEmail(User user, Integer userId);
 
     void deleteUser(Integer id);
-}
+}*/
