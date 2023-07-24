@@ -62,6 +62,19 @@ class ItemServiceTest {
 
         itemDto.setRequestId(1);
         Assertions.assertThrows(Exception.class, () -> itemService.createItem(userId, itemDto));
+
+        itemDto.setRequestId(null);
+        itemDto.setName("");
+        Assertions.assertThrows(Exception.class, () -> itemService.createItem(userId, itemDto));
+
+        itemDto.setName("new name");
+        itemDto.setDescription("");
+        Assertions.assertThrows(Exception.class, () -> itemService.createItem(userId, itemDto));
+
+        itemDto.setDescription("new desc");
+        itemDto.setAvailable(null);
+        Assertions.assertThrows(Exception.class, () -> itemService.createItem(userId, itemDto));
+
     }
 
     @Test
