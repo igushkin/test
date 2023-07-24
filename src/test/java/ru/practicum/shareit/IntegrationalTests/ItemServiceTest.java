@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class ItemServiceTests {
+class ItemServiceTest {
 
     private final EntityManager em;
     private final ItemService itemService;

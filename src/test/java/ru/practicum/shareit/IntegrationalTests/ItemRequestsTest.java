@@ -19,7 +19,7 @@ import javax.persistence.EntityManager;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class ItemRequestsTests {
+class ItemRequestsTest {
 
     private final EntityManager em;
     private final ItemRequestService itemRequestService;

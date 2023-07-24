@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class BookingServiceTests {
+class BookingServiceTest {
 
     private final EntityManager em;
     private final BookingService bookingService;

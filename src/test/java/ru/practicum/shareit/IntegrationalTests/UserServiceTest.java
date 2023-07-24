@@ -17,7 +17,7 @@ import javax.persistence.TypedQuery;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class UserServiceTests {
+class UserServiceTest {
 
     private final EntityManager em;
     private final UserService userService;
