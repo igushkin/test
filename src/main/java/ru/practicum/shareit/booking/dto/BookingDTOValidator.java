@@ -13,57 +13,27 @@ public class BookingDTOValidator {
         List<String> errMessages = new ArrayList<>();
 
         if (bookingDto.getStart() == null) {
-            var errMsg = "Дата";
-            errMsg += "начала";
-            errMsg += "обязательное";
-            errMsg += "поле";
+            var errMsg = "Дата обязательное поле";
             errMessages.add(errMsg);
         }
         if (bookingDto.getEnd() == null) {
-            var errMsg = "Дата";
-            errMsg += "начала";
-            errMsg += "обязательное";
-            errMsg += "поле";
+            var errMsg = "Дата обязательное поле";
             errMessages.add(errMsg);
         }
         if (bookingDto.getEnd().toInstant(ZoneOffset.UTC).isBefore(Instant.now())) {
-            var errMsg = "Дата";
-            errMsg += "окончания";
-            errMsg += "не";
-            errMsg += "может";
-            errMsg += "быть";
-            errMsg += "в";
-            errMsg += "прошлом";
+            var errMsg = "Дата окончания не может быть в прошлом";
             errMessages.add(errMsg);
         }
         if (bookingDto.getEnd().isBefore(bookingDto.getStart())) {
-            var errMsg = "Дата";
-            errMsg += "окончания";
-            errMsg += "должна";
-            errMsg += "быть";
-            errMsg += "позже";
-            errMsg += "даты";
-            errMsg += "начала";
+            var errMsg = "Дата окончания должна быть позже даты начала";
             errMessages.add(errMsg);
         }
         if (bookingDto.getEnd().isEqual(bookingDto.getStart())) {
-            var errMsg = "Дата";
-            errMsg += "окончания";
-            errMsg += "должна";
-            errMsg += "быть";
-            errMsg += "позже";
-            errMsg += "даты";
-            errMsg += "начала";
+            var errMsg = "Дата окончания должна быть позже даты начала";
             errMessages.add(errMsg);
         }
         if (bookingDto.getStart().toInstant(ZoneOffset.UTC).isBefore(Instant.now())) {
-            var errMsg = "Дата";
-            errMsg += "начала";
-            errMsg += "должна";
-            errMsg += "быть";
-            errMsg += "позже";
-            errMsg += "текущей";
-            errMsg += "даты";
+            var errMsg = "Дата начала должна быть позже текущей даты";
             errMessages.add(errMsg);
         }
         return errMessages;

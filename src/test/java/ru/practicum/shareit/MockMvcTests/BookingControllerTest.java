@@ -76,12 +76,6 @@ public class BookingControllerTest {
         );
     }
 
-    // createBooking
-    // getBookingById
-    // getBookingsByOwnerId
-    // getAllBookingsByUserId
-    // setBookingStatus
-
     @Test
     void createBooking() throws Exception {
         Mockito.when(bookingService.createBooking(Mockito.any(), Mockito.any()))
@@ -103,7 +97,6 @@ public class BookingControllerTest {
                 .thenReturn(bookingDto);
 
         mvc.perform(get("/bookings/" + 1)
-                        //.content(mapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -117,7 +110,6 @@ public class BookingControllerTest {
                 .thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings/owner")
-                        //.content(mapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -132,7 +124,6 @@ public class BookingControllerTest {
                 .thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings")
-                        //.content(mapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -144,7 +135,6 @@ public class BookingControllerTest {
     @Test
     void getAllBookingsByUserIdExc() throws Exception {
         mvc.perform(get("/bookings/?state=notknowstate")
-                        //.content(mapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)

@@ -26,11 +26,6 @@ class ItemRequestsTest {
     private final UserService userService;
     private final UserRepository userRepository;
 
-    // createItemRequest
-    // getAllByUserId
-    // getAll
-    // getById
-
     @Test
     void createItemRequest() {
 

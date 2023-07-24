@@ -70,13 +70,6 @@ public class ItemControllerTest {
                 .build());
     }
 
-    // getItemById
-    // getAllByUserId
-    // findItemByText
-    // createItem
-    // patchItem
-    // addComment
-
     @Test
     void createItem() throws Exception {
         Mockito.when(itemService.createItem(Mockito.any(), Mockito.any()))

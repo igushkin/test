@@ -126,8 +126,6 @@ class ItemServiceTest {
         var comment = Comment.builder()
                 .text("My first comment")
                 .build();
-
-        // Nobody booked this item
         Assertions.assertThrows(InvalidParameterException.class, () -> itemService.createComment(userId, itemId, comment));
 
         var usr = userRepository.findById(userId).get();

@@ -13,6 +13,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @Builder
+@Table(name = "item")
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +27,6 @@ public class Item {
     @ManyToOne()
     @JoinColumn(name = "request_id", referencedColumnName = "id")
     private ItemRequest request;
-    /*    @ManyToOne()
-        @JoinColumn(name = "item_request_id", referencedColumnName = "id")
-        private ItemRequest itemRequest;*/
     @Transient
     private Booking lastBooking;
     @Transient

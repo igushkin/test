@@ -1,8 +1,6 @@
 package ru.practicum.shareit.item;
 
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,22 +28,15 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-@AllArgsConstructor
 @NoArgsConstructor
-@Setter
 public class ItemService {
-    @Autowired
     private ItemRepository itemRepository;
-    @Autowired
     private UserRepository userRepository;
-    @Autowired
     private BookingRepository bookingRepository;
-    @Autowired
     private CommentRepository commentRepository;
-    @Autowired
     private ItemRequestRepository itemRequestRepository;
 
-/*    @Autowired
+    @Autowired
     public ItemService(
             ItemRepository itemRepository,
             UserRepository userRepository,
@@ -57,7 +48,7 @@ public class ItemService {
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
         this.itemRequestRepository = itemRequestRepository;
-    }*/
+    }
 
     public ItemDto getItemById(Integer itemId, Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}, {}", "getItemById", itemId, userId);

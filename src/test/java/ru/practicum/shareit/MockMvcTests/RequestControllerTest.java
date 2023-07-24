@@ -48,11 +48,6 @@ public class RequestControllerTest {
         itemRequestDto.setId(1);
     }
 
-    // getAllByUserId
-    // getAll
-    // createItemRequest
-    // getByID
-
     @Test
     void getAllByUserId() throws Exception {
         Mockito.when(itemRequestService.getAllByUserId(Mockito.any()))

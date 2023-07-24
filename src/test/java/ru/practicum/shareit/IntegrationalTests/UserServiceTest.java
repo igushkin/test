@@ -22,12 +22,6 @@ class UserServiceTest {
     private final EntityManager em;
     private final UserService userService;
 
-    // getUsers
-    // getUserById
-    // createUser
-    // patchUser
-    // deleteUser
-
     @Test
     void getUsers() {
         var user = User.builder()

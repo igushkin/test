@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemMapper;
@@ -27,6 +28,7 @@ public class ItemRequestService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
+    @Transactional
     public ItemRequestDto createItemRequest(Integer userId, ItemRequestDto itemRequestDto) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}, {}", "createItemRequest", userId, itemRequestDto);
 
