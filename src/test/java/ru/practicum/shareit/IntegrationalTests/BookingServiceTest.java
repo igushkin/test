@@ -32,7 +32,7 @@ class BookingServiceTest {
     private final UserRepository userRepository;
 
     @Test
-    void createBooking() {
+    void createBookingTest() {
         var owner = User.builder()
                 .name("Mark")
                 .email("s")
@@ -70,7 +70,7 @@ class BookingServiceTest {
     }
 
     @Test
-    void getBookingsByOwnerId() {
+    void getBookingsByOwnerIdTest() {
         var owner = User.builder()
                 .name("Mark")
                 .email("s")
@@ -121,7 +121,7 @@ class BookingServiceTest {
     }
 
     @Test
-    void getBookingById() {
+    void getBookingByIdTest() {
         var owner = User.builder()
                 .name("Mark")
                 .email("s")
