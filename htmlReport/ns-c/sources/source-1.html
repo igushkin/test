@@ -1,0 +1,196 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > BookingRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ru.practicum.shareit.booking.storage</a>
+</div>
+
+<h1>Coverage Summary for Class: BookingRepository (ru.practicum.shareit.booking.storage)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">BookingRepository$MockitoMock$34zp1HkN</td>
+  </tr>
+  <tr>
+    <td class="name">BookingRepository$MockitoMock$34zp1HkN$auxiliary$aO8BuIJo</td>
+  </tr>
+  <tr>
+    <td class="name">BookingRepository$MockitoMock$34zp1HkN$auxiliary$en3ZKPLv</td>
+  </tr>
+  <tr>
+    <td class="name">BookingRepository$MockitoMock$nq0VcLQE</td>
+  </tr>
+  <tr>
+    <td class="name">BookingRepository$MockitoMock$nq0VcLQE$auxiliary$sN1F2SJA</td>
+  </tr>
+  <tr>
+    <td class="name">BookingRepository$MockitoMock$nq0VcLQE$auxiliary$ULCR2XDS</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ru.practicum.shareit.booking.storage;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import ru.practicum.shareit.booking.Booking;
+&nbsp;import ru.practicum.shareit.item.Item;
+&nbsp;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface BookingRepository extends JpaRepository&lt;Booking, Integer&gt; {
+&nbsp;    @Query(&quot; select b &quot; +
+&nbsp;            &quot;from Booking b &quot; +
+&nbsp;            &quot;JOIN FETCH b.booker &quot; +
+&nbsp;            &quot;JOIN FETCH b.item &quot; +
+&nbsp;            &quot;WHERE b.booker.id = ?1 and (?2 is null or b.status = ?2) &quot; +
+&nbsp;            &quot;ORDER BY b.start desc&quot;)
+&nbsp;    List&lt;Booking&gt; findAllBookingsByUserIdAndStatusWithFetch(Integer userId, String bookingStatus, Pageable pageable);
+&nbsp;
+&nbsp;    @Query(&quot; select b &quot; +
+&nbsp;            &quot;from Booking b &quot; +
+&nbsp;            &quot;JOIN FETCH b.booker &quot; +
+&nbsp;            &quot;JOIN FETCH b.item &quot; +
+&nbsp;            &quot;WHERE b.booker.id = ?1 and b.end &lt; ?2 &quot; +
+&nbsp;            &quot;ORDER BY b.start desc &quot;)
+&nbsp;    List&lt;Booking&gt; findAllPastBookingsByUserIdWithFetch(Integer userId, LocalDateTime localDateTime, Pageable pageable);
+&nbsp;
+&nbsp;    @Query(&quot; select b &quot; +
+&nbsp;            &quot;from Booking b &quot; +
+&nbsp;            &quot;JOIN FETCH b.booker &quot; +
+&nbsp;            &quot;JOIN FETCH b.item &quot; +
+&nbsp;            &quot;WHERE b.booker.id = ?1 and b.start &lt; ?2 and b.end &gt; ?2 &quot; +
+&nbsp;            &quot;ORDER BY b.start desc &quot;)
+&nbsp;    List&lt;Booking&gt; findAllCurrentBookingsByUserIdWithFetch(Integer userId, LocalDateTime localDateTime, Pageable pageable);
+&nbsp;
+&nbsp;    @Query(&quot; select b &quot; +
+&nbsp;            &quot;from Booking b &quot; +
+&nbsp;            &quot;JOIN FETCH b.booker &quot; +
+&nbsp;            &quot;JOIN FETCH b.item &quot; +
+&nbsp;            &quot;WHERE b.booker.id = ?1 and b.start &gt; ?2 &quot; +
+&nbsp;            &quot;ORDER BY b.start desc&quot;)
+&nbsp;    List&lt;Booking&gt; findAllFutureBookingsByUserIdWithFetch(Integer userId, LocalDateTime localDateTime, Pageable pageable);
+&nbsp;
+&nbsp;    @Query(&quot;select b &quot; +
+&nbsp;            &quot;from Booking b &quot; +
+&nbsp;            &quot;JOIN FETCH b.booker &quot; +
+&nbsp;            &quot;JOIN FETCH b.item &quot; +
+&nbsp;            &quot;WHERE b.item.owner.id = ?1 and (?2 is null or b.status = ?2) &quot; +
+&nbsp;            &quot;ORDER BY b.start desc&quot;)
+&nbsp;    List&lt;Booking&gt; findAllBookingsByOwnerId(Integer userId, String bookingStatus, Pageable pageable);
+&nbsp;
+&nbsp;    @Query(&quot; select b &quot; +
+&nbsp;            &quot;from Booking b &quot; +
+&nbsp;            &quot;JOIN FETCH b.booker &quot; +
+&nbsp;            &quot;JOIN FETCH b.item &quot; +
+&nbsp;            &quot;WHERE b.item.owner.id = ?1 and b.end &lt; ?2 &quot; +
+&nbsp;            &quot;ORDER BY b.start desc&quot;)
+&nbsp;    List&lt;Booking&gt; findAllPastBookingsByOwnerIdWithFetch(Integer userId, LocalDateTime localDateTime, Pageable pageable);
+&nbsp;
+&nbsp;    @Query(&quot; select b &quot; +
+&nbsp;            &quot;from Booking b &quot; +
+&nbsp;            &quot;JOIN FETCH b.booker &quot; +
+&nbsp;            &quot;JOIN FETCH b.item &quot; +
+&nbsp;            &quot;WHERE b.item.owner.id = ?1 and b.start &lt; ?2 and b.end &gt; ?2 &quot; +
+&nbsp;            &quot;ORDER BY b.start desc&quot;)
+&nbsp;    List&lt;Booking&gt; findAllCurrentBookingsByOwnerIdWithFetch(Integer userId, LocalDateTime localDateTime, Pageable pageable);
+&nbsp;
+&nbsp;    @Query(&quot; select b &quot; +
+&nbsp;            &quot;from Booking b &quot; +
+&nbsp;            &quot;JOIN FETCH b.booker &quot; +
+&nbsp;            &quot;JOIN FETCH b.item &quot; +
+&nbsp;            &quot;WHERE b.item.owner.id = ?1 and b.start &gt; ?2 &quot; +
+&nbsp;            &quot;ORDER BY b.start desc&quot;)
+&nbsp;    List&lt;Booking&gt; findAllFutureBookingsByOwnerIdWithFetch(Integer userId, LocalDateTime localDateTime, Pageable pageable);
+&nbsp;
+&nbsp;    @Query(&quot;select i &quot; +
+&nbsp;            &quot;from Item i &quot; +
+&nbsp;            &quot;JOIN FETCH i.owner &quot; +
+&nbsp;            &quot;WHERE i.owner.id = ?1 &quot;)
+&nbsp;    List&lt;Item&gt; findOwnerById(Integer userId);
+&nbsp;
+&nbsp;    @Query(&quot; select b &quot; +
+&nbsp;            &quot;from Booking b &quot; +
+&nbsp;            &quot;JOIN FETCH b.item &quot; +
+&nbsp;            &quot;WHERE b.start &lt; ?2 and b.item.id = ?1 and b.status = &#39;APPROVED&#39; &quot; +
+&nbsp;            &quot;ORDER BY b.start desc&quot;)
+&nbsp;    List&lt;Booking&gt; findBookingsBeforeDateAndByItemId(Integer itemId, LocalDateTime localDateTime, Pageable pageable);
+&nbsp;
+&nbsp;    @Query(&quot; select b &quot; +
+&nbsp;            &quot;from Booking b &quot; +
+&nbsp;            &quot;JOIN FETCH b.item &quot; +
+&nbsp;            &quot;WHERE b.start &gt; ?2 and b.item.id = ?1 and b.status = &#39;APPROVED&#39; &quot; +
+&nbsp;            &quot;ORDER BY b.start &quot;)
+&nbsp;    List&lt;Booking&gt; findBookingsAfterDateAndByItemId(Integer itemId, LocalDateTime localDateTime, Pageable pageable);
+&nbsp;
+&nbsp;    @Query(&quot; select b &quot; +
+&nbsp;            &quot;from Booking b &quot; +
+&nbsp;            &quot;JOIN FETCH b.item &quot; +
+&nbsp;            &quot;WHERE b.item.id in ?1 and b.status =&#39;APPROVED&#39; &quot;)
+&nbsp;    List&lt;Booking&gt; findAllBookingsByItemIds(List&lt;Integer&gt; itemId);
+&nbsp;
+&nbsp;    @Query(&quot; select b &quot; +
+&nbsp;            &quot;from Booking b &quot; +
+&nbsp;            &quot;JOIN FETCH b.item &quot; +
+&nbsp;            &quot;JOIN FETCH b.booker &quot; +
+&nbsp;            &quot;WHERE b.booker.id = ?1 and b.item.id = ?2 and b.end &lt; ?3 &quot;)
+&nbsp;    List&lt;Booking&gt; findByBookerIdAndItemIdAndEndBefore(Integer bookerId, Integer itemId, LocalDateTime start);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-07-24 01:39</div>
+</div>
+</body>
+</html>

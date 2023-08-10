@@ -1,0 +1,162 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ItemController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ru.practicum.shareit.item</a>
+</div>
+
+<h1>Coverage Summary for Class: ItemController (ru.practicum.shareit.item)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ItemController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (15/15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ru.practicum.shareit.item;
+&nbsp;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import ru.practicum.shareit.item.dto.CommentDto;
+&nbsp;import ru.practicum.shareit.item.dto.ItemDto;
+&nbsp;
+&nbsp;import javax.validation.Valid;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(path = &quot;/items&quot;)
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;public class ItemController {
+&nbsp;
+&nbsp;    private final ItemService itemService;
+&nbsp;
+&nbsp;    @Autowired
+<b class="fc">&nbsp;    public ItemController(ItemService itemService) {</b>
+<b class="fc">&nbsp;        this.itemService = itemService;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;{id}&quot;)
+&nbsp;    public ItemDto getItemById(@PathVariable Integer id, @RequestHeader(value = &quot;X-Sharer-User-Id&quot;) Integer userId) {
+<b class="fc">&nbsp;        log.info(&quot;??????? ?????? ? ??????: {}. ???????? ?????????: {}, {}&quot;, &quot;getItemById&quot;, id, userId);</b>
+<b class="fc">&nbsp;        return itemService.getItemById(id, userId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public List&lt;ItemDto&gt; getAllByUserId(@RequestHeader(value = &quot;X-Sharer-User-Id&quot;) Integer userId) {
+<b class="fc">&nbsp;        log.info(&quot;??????? ?????? ? ??????: {}. ???????? ?????????: {}&quot;, &quot;getItemById&quot;, userId);</b>
+<b class="fc">&nbsp;        return itemService.getAllByUserId(userId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/search&quot;)
+&nbsp;    public List&lt;ItemDto&gt; findItemByText(@RequestParam(name = &quot;text&quot;) String text) {
+<b class="fc">&nbsp;        log.info(&quot;??????? ?????? ? ??????: {}. ???????? ?????????: {}&quot;, &quot;findItemByText&quot;, text);</b>
+<b class="fc">&nbsp;        return itemService.findItemByText(text);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    public ItemDto createItem(@RequestHeader(value = &quot;X-Sharer-User-Id&quot;) Integer userId, @Valid @RequestBody ItemDto item) {
+<b class="fc">&nbsp;        log.info(&quot;??????? ?????? ? ??????: {}. ???????? ?????????: {}, {}&quot;, &quot;createItem&quot;, userId, item);</b>
+<b class="fc">&nbsp;        return itemService.createItem(userId, item);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PatchMapping(&quot;{id}&quot;)
+&nbsp;    public ItemDto patchItem(@RequestHeader(value = &quot;X-Sharer-User-Id&quot;) Integer userId, @RequestBody ItemDto item, @PathVariable Integer id) {
+<b class="fc">&nbsp;        log.info(&quot;??????? ?????? ? ??????: {}. ???????? ?????????: {}, {}, {}&quot;, &quot;patchItem&quot;, userId, item, id);</b>
+<b class="fc">&nbsp;        return itemService.patchItem(item, id, userId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/{itemId}/comment&quot;)
+&nbsp;    public CommentDto addComment(@RequestHeader(value = &quot;X-Sharer-User-Id&quot;) Integer userId, @RequestBody Comment comment, @PathVariable Integer itemId) {
+<b class="fc">&nbsp;        log.info(&quot;??????? ?????? ? ??????: {}. ???????? ?????????: {}, {}, {}&quot;, &quot;addComment&quot;, userId, comment, itemId);</b>
+<b class="fc">&nbsp;        return itemService.createComment(userId, itemId, comment);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-07-24 01:39</div>
+</div>
+</body>
+</html>

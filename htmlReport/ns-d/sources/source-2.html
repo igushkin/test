@@ -1,0 +1,106 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ItemRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ru.practicum.shareit.item.storage</a>
+</div>
+
+<h1>Coverage Summary for Class: ItemRepository (ru.practicum.shareit.item.storage)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ItemRepository$MockitoMock$eoXWFvhB</td>
+  </tr>
+  <tr>
+    <td class="name">ItemRepository$MockitoMock$eoXWFvhB$auxiliary$hIRL4gYI</td>
+  </tr>
+  <tr>
+    <td class="name">ItemRepository$MockitoMock$eoXWFvhB$auxiliary$RIDijPJk</td>
+  </tr>
+  <tr>
+    <td class="name">ItemRepository$MockitoMock$tCvmlJBk</td>
+  </tr>
+  <tr>
+    <td class="name">ItemRepository$MockitoMock$tCvmlJBk$auxiliary$ADVP5RGv</td>
+  </tr>
+  <tr>
+    <td class="name">ItemRepository$MockitoMock$tCvmlJBk$auxiliary$bRxmwtfH</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ru.practicum.shareit.item.storage;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import ru.practicum.shareit.item.Item;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface ItemRepository extends JpaRepository&lt;Item, Integer&gt; {
+&nbsp;    List&lt;Item&gt; findByOwnerId(Integer userId);
+&nbsp;
+&nbsp;    List&lt;Item&gt; findAllByRequestIdIn(List&lt;Integer&gt; ids);
+&nbsp;
+&nbsp;    @Query(&quot;select i from Item i &quot; +
+&nbsp;            &quot;where (upper(i.name) like upper(concat(&#39;%&#39;, ?1, &#39;%&#39;)) &quot; +
+&nbsp;            &quot; or upper(i.description) like upper(concat(&#39;%&#39;, ?1, &#39;%&#39;))) &quot; +
+&nbsp;            &quot; and i.available = true&quot;)
+&nbsp;    List&lt;Item&gt; search(String text);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-07-24 01:39</div>
+</div>
+</body>
+</html>

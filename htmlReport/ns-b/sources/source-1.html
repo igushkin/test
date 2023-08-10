@@ -1,0 +1,110 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ItemRequestRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ru.practicum.shareit.request.storage</a>
+</div>
+
+<h1>Coverage Summary for Class: ItemRequestRepository (ru.practicum.shareit.request.storage)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ItemRequestRepository$MockitoMock$nmDssgx3</td>
+  </tr>
+  <tr>
+    <td class="name">ItemRequestRepository$MockitoMock$nmDssgx3$auxiliary$8uRTXiuB</td>
+  </tr>
+  <tr>
+    <td class="name">ItemRequestRepository$MockitoMock$nmDssgx3$auxiliary$yX1iCW8a</td>
+  </tr>
+  <tr>
+    <td class="name">ItemRequestRepository$MockitoMock$vb3EZMYh</td>
+  </tr>
+  <tr>
+    <td class="name">ItemRequestRepository$MockitoMock$vb3EZMYh$auxiliary$iXeJzmU0</td>
+  </tr>
+  <tr>
+    <td class="name">ItemRequestRepository$MockitoMock$vb3EZMYh$auxiliary$ok0G0li8</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ru.practicum.shareit.request.storage;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import ru.practicum.shareit.request.ItemRequest;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface ItemRequestRepository extends JpaRepository&lt;ItemRequest, Integer&gt; {
+&nbsp;
+&nbsp;    List&lt;ItemRequest&gt; findAllByRequestorIdOrderByCreatedDesc(Integer id);
+&nbsp;
+&nbsp;    List&lt;ItemRequest&gt; findAllByRequestorIdIsNot(Integer id);
+&nbsp;
+&nbsp;    Page&lt;ItemRequest&gt; findAllByRequestorIdIsNot(Integer id, Pageable pageable);
+&nbsp;
+&nbsp;
+&nbsp;    Optional&lt;ItemRequest&gt; findById(Integer id);
+&nbsp;
+&nbsp;    /*    Page&lt;ItemRequest&gt; findAll(Integer id, Pageable pageable);*/
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-07-24 01:39</div>
+</div>
+</body>
+</html>

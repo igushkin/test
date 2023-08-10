@@ -1,0 +1,155 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > UserController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ru.practicum.shareit.user</a>
+</div>
+
+<h1>Coverage Summary for Class: UserController (ru.practicum.shareit.user)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ru.practicum.shareit.user;
+&nbsp;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import ru.practicum.shareit.user.dto.UserDto;
+&nbsp;
+&nbsp;import javax.validation.Valid;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(path = &quot;/users&quot;)
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;public class UserController {
+&nbsp;
+&nbsp;    private final UserService userService;
+&nbsp;
+&nbsp;    @Autowired
+<b class="fc">&nbsp;    public UserController(UserService userService) {</b>
+<b class="fc">&nbsp;        this.userService = userService;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public List&lt;UserDto&gt; getUsers() {
+<b class="fc">&nbsp;        log.info(&quot;??????? ?????? ? ??????: {}&quot;, &quot;getUsers&quot;);</b>
+<b class="fc">&nbsp;        return userService.getUsers();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;{id}&quot;)
+&nbsp;    public UserDto getUserById(@PathVariable Integer id) {
+<b class="fc">&nbsp;        log.info(&quot;??????? ?????? ? ??????: {}. ???????? ?????????: {}&quot;, &quot;getUserById&quot;, id);</b>
+<b class="fc">&nbsp;        return userService.getUserById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    public UserDto createUser(@Valid @RequestBody UserDto user) {
+<b class="fc">&nbsp;        log.info(&quot;??????? ?????? ? ??????: {}. ???????? ?????????: {}&quot;, &quot;createUser&quot;, user);</b>
+<b class="fc">&nbsp;        return userService.createUser(user);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PatchMapping(&quot;{id}&quot;)
+&nbsp;    public UserDto patchUser(@Valid @RequestBody UserDto userDto, @PathVariable Integer id) {
+<b class="fc">&nbsp;        log.info(&quot;??????? ?????? ? ??????: {}. ???????? ??????????: {}, {}&quot;, &quot;patchUser&quot;, userDto, id);</b>
+<b class="fc">&nbsp;        return userService.patchUser(userDto, id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;{id}&quot;)
+&nbsp;    public void deleteUser(@PathVariable Integer id) {
+<b class="fc">&nbsp;        log.info(&quot;??????? ?????? ? ??????: {}. ???????? ?????????: {}&quot;, &quot;deleteUser&quot;, id);</b>
+<b class="fc">&nbsp;        userService.deleteUser(id);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-07-24 01:39</div>
+</div>
+</body>
+</html>

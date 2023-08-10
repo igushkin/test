@@ -1,0 +1,88 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ItemStorage</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ru.practicum.shareit.item.storage</a>
+</div>
+
+<h1>Coverage Summary for Class: ItemStorage (ru.practicum.shareit.item.storage)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ItemStorage</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ru.practicum.shareit.item.storage;
+&nbsp;
+&nbsp;import ru.practicum.shareit.item.Item;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface ItemStorage {
+&nbsp;    Item getItemById(Integer id);
+&nbsp;
+&nbsp;    List&lt;Item&gt; getItemsByUserId(Integer userId);
+&nbsp;
+&nbsp;    List&lt;Item&gt; findAvailableItemsByText(String text);
+&nbsp;
+&nbsp;    Item createItem(Integer userId, Item item);
+&nbsp;
+&nbsp;    Item patchItemName(Item item, Integer itemId, Integer userId);
+&nbsp;
+&nbsp;    Item patchItemDescription(Item item, Integer itemId, Integer userId);
+&nbsp;
+&nbsp;    Item patchItemStatus(Item item, Integer itemId, Integer userId);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-07-24 01:39</div>
+</div>
+</body>
+</html>

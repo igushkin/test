@@ -160,5 +160,4 @@ public class ItemControllerTest {
                         .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk());
     }
-
 }
