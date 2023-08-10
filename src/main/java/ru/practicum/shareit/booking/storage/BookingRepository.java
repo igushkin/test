@@ -18,7 +18,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "JOIN FETCH b.item " +
             "WHERE b.booker.id = ?1 and (?2 is null or b.status = ?2) " +
             "ORDER BY b.start desc")
-    List<Booking> findAllBookingsByUserIdAndStatusWithFetch(Integer userId, String bookingStatus);
+    List<Booking> findAllBookingsByUserIdAndStatusWithFetch(Integer userId, String bookingStatus, Pageable pageable);
 
     @Query(" select b " +
             "from Booking b " +
@@ -26,7 +26,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "JOIN FETCH b.item " +
             "WHERE b.booker.id = ?1 and b.end < ?2 " +
             "ORDER BY b.start desc ")
-    List<Booking> findAllPastBookingsByUserIdWithFetch(Integer userId, LocalDateTime localDateTime);
+    List<Booking> findAllPastBookingsByUserIdWithFetch(Integer userId, LocalDateTime localDateTime, Pageable pageable);
 
     @Query(" select b " +
             "from Booking b " +
@@ -34,7 +34,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "JOIN FETCH b.item " +
             "WHERE b.booker.id = ?1 and b.start < ?2 and b.end > ?2 " +
             "ORDER BY b.start desc ")
-    List<Booking> findAllCurrentBookingsByUserIdWithFetch(Integer userId, LocalDateTime localDateTime);
+    List<Booking> findAllCurrentBookingsByUserIdWithFetch(Integer userId, LocalDateTime localDateTime, Pageable pageable);
 
     @Query(" select b " +
             "from Booking b " +
@@ -42,7 +42,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "JOIN FETCH b.item " +
             "WHERE b.booker.id = ?1 and b.start > ?2 " +
             "ORDER BY b.start desc")
-    List<Booking> findAllFutureBookingsByUserIdWithFetch(Integer userId, LocalDateTime localDateTime);
+    List<Booking> findAllFutureBookingsByUserIdWithFetch(Integer userId, LocalDateTime localDateTime, Pageable pageable);
 
     @Query("select b " +
             "from Booking b " +
@@ -50,7 +50,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "JOIN FETCH b.item " +
             "WHERE b.item.owner.id = ?1 and (?2 is null or b.status = ?2) " +
             "ORDER BY b.start desc")
-    List<Booking> findAllBookingsByOwnerId(Integer userId, String bookingStatus);
+    List<Booking> findAllBookingsByOwnerId(Integer userId, String bookingStatus, Pageable pageable);
 
     @Query(" select b " +
             "from Booking b " +
@@ -58,7 +58,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "JOIN FETCH b.item " +
             "WHERE b.item.owner.id = ?1 and b.end < ?2 " +
             "ORDER BY b.start desc")
-    List<Booking> findAllPastBookingsByOwnerIdWithFetch(Integer userId, LocalDateTime localDateTime);
+    List<Booking> findAllPastBookingsByOwnerIdWithFetch(Integer userId, LocalDateTime localDateTime, Pageable pageable);
 
     @Query(" select b " +
             "from Booking b " +
@@ -66,7 +66,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "JOIN FETCH b.item " +
             "WHERE b.item.owner.id = ?1 and b.start < ?2 and b.end > ?2 " +
             "ORDER BY b.start desc")
-    List<Booking> findAllCurrentBookingsByOwnerIdWithFetch(Integer userId, LocalDateTime localDateTime);
+    List<Booking> findAllCurrentBookingsByOwnerIdWithFetch(Integer userId, LocalDateTime localDateTime, Pageable pageable);
 
     @Query(" select b " +
             "from Booking b " +
@@ -74,7 +74,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "JOIN FETCH b.item " +
             "WHERE b.item.owner.id = ?1 and b.start > ?2 " +
             "ORDER BY b.start desc")
-    List<Booking> findAllFutureBookingsByOwnerIdWithFetch(Integer userId, LocalDateTime localDateTime);
+    List<Booking> findAllFutureBookingsByOwnerIdWithFetch(Integer userId, LocalDateTime localDateTime, Pageable pageable);
 
     @Query("select i " +
             "from Item i " +
@@ -87,14 +87,14 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "JOIN FETCH b.item " +
             "WHERE b.start < ?2 and b.item.id = ?1 and b.status = 'APPROVED' " +
             "ORDER BY b.start desc")
-    List<Booking> findLastBookingByItemId(Integer itemId, LocalDateTime localDateTime, Pageable pageable);
+    List<Booking> findBookingsBeforeDateAndByItemId(Integer itemId, LocalDateTime localDateTime, Pageable pageable);
 
     @Query(" select b " +
             "from Booking b " +
             "JOIN FETCH b.item " +
             "WHERE b.start > ?2 and b.item.id = ?1 and b.status = 'APPROVED' " +
             "ORDER BY b.start ")
-    List<Booking> findNextBookingByItemId(Integer itemId, LocalDateTime localDateTime, Pageable pageable);
+    List<Booking> findBookingsAfterDateAndByItemId(Integer itemId, LocalDateTime localDateTime, Pageable pageable);
 
     @Query(" select b " +
             "from Booking b " +

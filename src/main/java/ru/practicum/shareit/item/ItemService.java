@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.storage.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemRepository;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.storage.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
@@ -25,18 +28,26 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@NoArgsConstructor
 public class ItemService {
-    private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
-    private final BookingRepository bookingRepository;
-    private final CommentRepository commentRepository;
+    private ItemRepository itemRepository;
+    private UserRepository userRepository;
+    private BookingRepository bookingRepository;
+    private CommentRepository commentRepository;
+    private ItemRequestRepository itemRequestRepository;
 
     @Autowired
-    public ItemService(ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository, CommentRepository commentRepository) {
+    public ItemService(
+            ItemRepository itemRepository,
+            UserRepository userRepository,
+            BookingRepository bookingRepository,
+            CommentRepository commentRepository,
+            ItemRequestRepository itemRequestRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
+        this.itemRequestRepository = itemRequestRepository;
     }
 
     public ItemDto getItemById(Integer itemId, Integer userId) {
@@ -52,11 +63,11 @@ public class ItemService {
         BookingDto nextBooking = null;
 
         if (item.get().getOwner().getId().equals(userId)) {
-            var queryResult = bookingRepository.findLastBookingByItemId(itemId, LocalDateTime.now(), PageRequest.of(0, 1));
+            var queryResult = bookingRepository.findBookingsBeforeDateAndByItemId(itemId, LocalDateTime.now(), PageRequest.of(0, 1));
             if (queryResult.size() > 0) {
                 lastBooking = BookingMapper.toBookingDto(queryResult.get(0));
             }
-            queryResult = bookingRepository.findNextBookingByItemId(itemId, LocalDateTime.now(), PageRequest.of(0, 1));
+            queryResult = bookingRepository.findBookingsAfterDateAndByItemId(itemId, LocalDateTime.now(), PageRequest.of(0, 1));
             if (queryResult.size() > 0) {
                 nextBooking = BookingMapper.toBookingDto(queryResult.get(0));
             }
@@ -152,7 +163,18 @@ public class ItemService {
         }
 
         var item = ItemMapper.toItem(itemDto);
+        ItemRequest request = null;
+
+        if (itemDto.getRequestId() != null) {
+            try {
+                request = itemRequestRepository.findById(itemDto.getRequestId()).get();
+            } catch (Exception e) {
+                throw new NotFoundException("ItemRequest was not found");
+            }
+        }
+
         item.setOwner(owner);
+        item.setRequest(request);
 
         item = itemRepository.save(item);
         return ItemMapper.toItemDto(item);
