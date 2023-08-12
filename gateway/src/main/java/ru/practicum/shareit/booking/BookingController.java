@@ -31,20 +31,6 @@ public class BookingController {
         return bookingClient.getBookings(userId, state, from, size);
     }
 
-/*    @PostMapping
-    public ResponseEntity<Object> bookItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                                           @RequestBody @Valid BookItemRequestDto requestDto) {
-        log.info("Creating booking {}, userId={}", requestDto, userId);
-        return bookingClient.bookItem(userId, requestDto);
-    }*/
-
-/*    @GetMapping("/{bookingId}")
-    public ResponseEntity<Object> getBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-                                             @PathVariable Long bookingId) {
-        log.info("Get booking {}, userId={}", bookingId, userId);
-        return bookingClient.getBooking(userId, bookingId);
-    }*/
-
     @PostMapping
     public ResponseEntity<Object> createBooking(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestBody BookingDto bookingDto) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "createBooking", userId, bookingDto);
@@ -68,18 +54,6 @@ public class BookingController {
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
         return bookingClient.getBookingsByOwnerId(userId, state, from, size);
     }
-
-/*
-    @GetMapping
-    public List<BookingExtendedDto> getAllBookingsByUserId(
-            @RequestHeader(value = "X-Sharer-User-Id") Integer userId,
-            @RequestParam(name = "state", required = false, defaultValue = "ALL") BookingState state,
-            @RequestParam(required = false) Integer from,
-            @RequestParam(required = false) Integer size) {
-        log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "getAllBookingsByUserId", userId, state);
-        return bookingService.getAllBookingsByUserId(userId, state, from, size);
-    }
-*/
 
     @PatchMapping("{bookingId}")
     public ResponseEntity<Object> setBookingStatus(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @PathVariable Integer bookingId, @RequestParam(name = "approved") Boolean status) {
