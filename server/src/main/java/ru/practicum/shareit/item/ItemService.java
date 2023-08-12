@@ -84,7 +84,7 @@ public class ItemService {
     public List<ItemDto> getAllByUserId(Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}", "getAllByUserId", userId);
 
-        var items = itemRepository.findByOwnerId(userId)
+        var items = itemRepository.findByOwnerIdOrderById(userId)
                 .stream()
                 .map(x -> ItemMapper.toItemDto(x))
                 .collect(Collectors.toList());
