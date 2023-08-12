@@ -46,7 +46,7 @@ public class ItemRequestService {
         itemRequestRepository.save(itemRequest);
         return ItemRequestMapper.toItemRequestDto(itemRequest);
     }
-
+    @Transactional(readOnly = true)
     public List<ItemRequestDto> getAllByUserId(Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}", "getAllByUserId", userId);
         User user;
@@ -74,7 +74,7 @@ public class ItemRequestService {
 
         return requests;
     }
-
+    @Transactional(readOnly = true)
     public List<ItemRequestDto> getAll(Integer userId, Integer from, Integer size) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}", "getAll", userId);
         User user;
@@ -91,10 +91,6 @@ public class ItemRequestService {
                     .map(x -> ItemRequestMapper.toItemRequestDto(x))
                     .collect(Collectors.toList());
         } else {
-            if (from < 0 || size < 1) {
-                throw new BadRequestException("From must be >= 0 and size must be > 0");
-            }
-
             var page = (from / size);
 
             var pageRequest = PageRequest.of(page, size, Sort.by("created").descending());
@@ -119,7 +115,7 @@ public class ItemRequestService {
             return requests;
         }
     }
-
+    @Transactional(readOnly = true)
     public ItemRequestDto getById(Integer requestId, Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}, {}", "getById", requestId, userId);
         ItemRequest request;

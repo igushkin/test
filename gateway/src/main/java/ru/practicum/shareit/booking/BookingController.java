@@ -6,11 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.booking.dto.BookingDTOValidator;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.security.InvalidParameterException;
 
 @Controller
 @RequestMapping(path = "/bookings")
@@ -34,6 +36,12 @@ public class BookingController {
     @PostMapping
     public ResponseEntity<Object> createBooking(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestBody BookingDto bookingDto) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "createBooking", userId, bookingDto);
+        var validationResult = BookingDTOValidator.validateCreation(bookingDto);
+
+        if (validationResult.isPresent()) {
+            throw new InvalidParameterException(validationResult.get());
+        }
+
         return bookingClient.bookItem(userId, bookingDto);
     }
 
@@ -58,7 +66,6 @@ public class BookingController {
     @PatchMapping("{bookingId}")
     public ResponseEntity<Object> setBookingStatus(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @PathVariable Integer bookingId, @RequestParam(name = "approved") Boolean status) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}, {}", "setBookingStatus", userId, bookingId, status);
-        //var bookingStatus = approved ? BookingStatus.APPROVED : BookingStatus.REJECTED;
         return bookingClient.setBookingStatus(userId, bookingId, status);
     }
 }

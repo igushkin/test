@@ -49,7 +49,7 @@ public class ItemService {
         this.commentRepository = commentRepository;
         this.itemRequestRepository = itemRequestRepository;
     }
-
+    @Transactional(readOnly = true)
     public ItemDto getItemById(Integer itemId, Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}, {}", "getItemById", itemId, userId);
 
@@ -80,7 +80,7 @@ public class ItemService {
 
         return ItemMapper.toItemDtoWithBookings(item.get(), lastBooking, nextBooking, comments);
     }
-
+    @Transactional(readOnly = true)
     public List<ItemDto> getAllByUserId(Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}", "getAllByUserId", userId);
 
@@ -129,7 +129,7 @@ public class ItemService {
 
         return items;
     }
-
+    @Transactional(readOnly = true)
     public List<ItemDto> findItemByText(String text) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}", "findItemByText", text);
         text = text.trim().toLowerCase();
@@ -148,11 +148,6 @@ public class ItemService {
     @Transactional
     public ItemDto createItem(Integer userId, ItemDto itemDto) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "createItem", userId, itemDto);
-        var validationResult = ItemDtoValidator.validateCreation(itemDto);
-
-        if (validationResult.size() > 0) {
-            throw new InvalidParameterException(validationResult.get(0));
-        }
 
         User owner = null;
 
@@ -183,11 +178,6 @@ public class ItemService {
     @Transactional
     public ItemDto patchItem(ItemDto itemDto, Integer itemId, Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметров: {},{},{}", "patchItem", itemDto, itemId, userId);
-        var validationResult = ItemDtoValidator.validatePatch(itemDto);
-
-        if (validationResult.size() > 0) {
-            throw new InvalidParameterException(validationResult.get(0));
-        }
 
         Item itemFromDb = itemRepository.findById(itemId).get();
 

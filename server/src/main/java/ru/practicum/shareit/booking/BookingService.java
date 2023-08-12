@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.dto.BookingDTOValidator;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingExtendedDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
@@ -50,12 +49,6 @@ public class BookingService {
             throw new NotFoundException("Не найдены связанные сущности." + e.getMessage());
         }
 
-        var validationResult = BookingDTOValidator.validateCreation(bookingDto);
-
-        if (validationResult.size() > 0) {
-            throw new InvalidParameterException(validationResult.get(0));
-        }
-
         if (!item.getAvailable()) {
             throw new InvalidParameterException("");
         }
@@ -72,6 +65,7 @@ public class BookingService {
         return BookingMapper.toExtendedBookingDto(booking);
     }
 
+    @Transactional(readOnly = true)
     public List<BookingExtendedDto> getBookingsByOwnerId(Integer userId, BookingState bookingState, Integer from, Integer size) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "getBookingsByOwnerId", userId, bookingState);
 
@@ -115,6 +109,7 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public BookingExtendedDto getBookingById(Integer userId, Integer bookingId) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "getBookingById", userId, bookingId);
 
@@ -201,7 +196,7 @@ public class BookingService {
 
     private PageRequest getPage(Integer from, Integer size) {
         if (from < 0 || size < 1) {
-            throw new RuntimeException("Not valid page arams");
+            throw new RuntimeException("Not valid page params");
         }
 
         var pageIndex = from / size;

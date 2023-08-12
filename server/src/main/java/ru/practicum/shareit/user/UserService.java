@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DuplicateKeyException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserDtoValidator;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.security.InvalidParameterException;
@@ -20,8 +19,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-
-
+    @Transactional(readOnly = true)
     public List<UserDto> getUsers() {
         log.info("Получен запрос к методу: {}.", "getUsers");
         return userRepository.findAll()
@@ -29,7 +27,7 @@ public class UserService {
                 .map(x -> UserMapper.toUserDto(x))
                 .collect(Collectors.toList());
     }
-
+    @Transactional(readOnly = true)
     public UserDto getUserById(Integer id) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}.", "getUserById", id);
 
@@ -45,11 +43,6 @@ public class UserService {
     @Transactional
     public UserDto createUser(UserDto userDto) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}.", "createUser", userDto);
-        var validationResult = UserDtoValidator.validateCreation(userDto);
-
-        if (validationResult.size() > 0) {
-            throw new InvalidParameterException(validationResult.get(0));
-        }
 
         User user;
 
@@ -65,11 +58,6 @@ public class UserService {
     @Transactional
     public UserDto patchUser(UserDto userDto, Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}.", "patchUser", userDto, userId);
-        var validationResult = UserDtoValidator.validatePatch(userDto);
-
-        if (validationResult.size() > 0) {
-            throw new InvalidParameterException(validationResult.get(0));
-        }
 
         User userFromDB = userRepository.findById(userId).get();
 
