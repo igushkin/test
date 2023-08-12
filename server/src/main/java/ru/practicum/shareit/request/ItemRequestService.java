@@ -46,6 +46,7 @@ public class ItemRequestService {
         itemRequestRepository.save(itemRequest);
         return ItemRequestMapper.toItemRequestDto(itemRequest);
     }
+
     @Transactional(readOnly = true)
     public List<ItemRequestDto> getAllByUserId(Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}", "getAllByUserId", userId);
@@ -74,6 +75,7 @@ public class ItemRequestService {
 
         return requests;
     }
+
     @Transactional(readOnly = true)
     public List<ItemRequestDto> getAll(Integer userId, Integer from, Integer size) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}", "getAll", userId);
@@ -115,6 +117,7 @@ public class ItemRequestService {
             return requests;
         }
     }
+
     @Transactional(readOnly = true)
     public ItemRequestDto getById(Integer requestId, Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}, {}", "getById", requestId, userId);

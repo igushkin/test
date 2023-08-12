@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+
     @Transactional(readOnly = true)
     public List<UserDto> getUsers() {
         log.info("Получен запрос к методу: {}.", "getUsers");
@@ -27,6 +28,7 @@ public class UserService {
                 .map(x -> UserMapper.toUserDto(x))
                 .collect(Collectors.toList());
     }
+
     @Transactional(readOnly = true)
     public UserDto getUserById(Integer id) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}.", "getUserById", id);

@@ -49,6 +49,7 @@ public class ItemService {
         this.commentRepository = commentRepository;
         this.itemRequestRepository = itemRequestRepository;
     }
+
     @Transactional(readOnly = true)
     public ItemDto getItemById(Integer itemId, Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}, {}", "getItemById", itemId, userId);
@@ -80,6 +81,7 @@ public class ItemService {
 
         return ItemMapper.toItemDtoWithBookings(item.get(), lastBooking, nextBooking, comments);
     }
+
     @Transactional(readOnly = true)
     public List<ItemDto> getAllByUserId(Integer userId) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}", "getAllByUserId", userId);
@@ -129,6 +131,7 @@ public class ItemService {
 
         return items;
     }
+
     @Transactional(readOnly = true)
     public List<ItemDto> findItemByText(String text) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}", "findItemByText", text);
