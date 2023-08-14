@@ -10,6 +10,7 @@ import ru.practicum.shareit.booking.dto.BookingDTOValidator;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.security.InvalidParameterException;
@@ -34,7 +35,7 @@ public class BookingController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createBooking(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestBody BookingDto bookingDto) {
+    public ResponseEntity<Object> createBooking(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestBody @Valid BookingDto bookingDto) {
         log.info("Получен запрос к методу: {}. Значение параметров: {}, {}", "createBooking", userId, bookingDto);
         var validationResult = BookingDTOValidator.validateCreation(bookingDto);
 

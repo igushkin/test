@@ -50,7 +50,7 @@ public class ItemController {
     }
 
     @PatchMapping("{itemId}")
-    public ResponseEntity<Object> patchItem(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestBody ItemDto item, @PathVariable Integer itemId) {
+    public ResponseEntity<Object> patchItem(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @Valid @RequestBody ItemDto item, @PathVariable Integer itemId) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}, {}, {}", "patchItem", userId, item, itemId);
         var validationResult = ItemDtoValidator.validatePatch(item);
         for (var message : validationResult) {
@@ -61,7 +61,7 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<Object> addComment(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @RequestBody CommentDto comment, @PathVariable Integer itemId) {
+    public ResponseEntity<Object> addComment(@RequestHeader(value = "X-Sharer-User-Id") Integer userId, @Valid @RequestBody CommentDto comment, @PathVariable Integer itemId) {
         log.info("Получен запрос к методу: {}. Значение параметра: {}, {}, {}", "addComment", userId, comment, itemId);
         return itemClient.addComment(userId, comment, itemId);
     }
