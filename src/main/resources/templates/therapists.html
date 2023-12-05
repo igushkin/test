@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>List of therapists</h1>
+<table>
+    <tr>
+        <th>Firstname</th>
+        <th>Lastname</th>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Confirmed</th>
+    </tr>
+    <tr th:each="therapist : ${therapists}">
+        <td th:text="${therapist.firstName}"></td>
+        <td th:text="${therapist.lastName}"></td>
+        <td th:text="${therapist.email}"></td>
+        <td th:text="${therapist.password}"></td>
+        <td th:text="${therapist.confirmed}"></td>
+    </tr>
+</table>
+</body>
+</html>

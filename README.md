@@ -1,2 +1,2 @@
-# java-shareit
-Template repository for Shareit project.
+# esta
+This is the repository for the esta platform

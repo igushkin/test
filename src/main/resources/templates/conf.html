@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>Confirm password with HTML5</h1>
+
+<form th:action="@{'/therapists/' + ${code}}" method="post">
+    <label for="password">Password :</label> <br/>
+    <input name="password" type="password" placeholder="Password" id="password" required><br/>
+
+    <label for="password">Confirm password :</label> <br/>
+    <input type="password" placeholder="Confirm Password" id="confirm_password" required><br/>
+    <br/>
+    <button type="submit">Confirm</button>
+
+</form>
+</body>
+<script>
+    var password = document.getElementById("password")
+        , confirm_password = document.getElementById("confirm_password");
+
+    function validatePassword() {
+        if (password.value != confirm_password.value) {
+            confirm_password.setCustomValidity("Passwords Don't Match");
+        } else {
+            confirm_password.setCustomValidity('');
+        }
+    }
+
+    password.onchange = validatePassword;
+    confirm_password.onkeyup = validatePassword;
+
+</script>
+</html>
